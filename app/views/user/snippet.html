@@ -1,0 +1,118 @@
+<f3:inject id="meta" mode="append">
+    <link rel="stylesheet" type="text/css" href="{{@BASE}}/css/default.min.css">
+    <style>
+        /* Style for the copy icon */
+        .copy-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            /* Adjust positioning as needed */
+            cursor: pointer;
+            font-size: 16px;
+            color: #555;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+
+        .copy-icon:hover {
+            color: #000;
+        }
+    </style>
+</f3:inject>
+<f3:inject id="content">
+    <!-- Generated: 2024-08-02 20:17 -->
+    <h2 class="text-lg font-bold">Snippet</h2>
+    <div x-data="snippet">
+        <include href="blocks/table.html" />
+        <include href="blocks/modal-form.html" />
+    </div>
+    <ff:modal id="snippet" title="Snippet" size="large">
+        <div class="overflow-y-auto h-[70vh] px-6 py-4" x-data="view_snippet">
+            <div id="snippet_div" class="format"></div>
+        </div>
+    </ff:modal>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script src="{{@BASE}}/js/markdown-it.min.js"></script>
+    <script src="{{@BASE}}/js/highlight.min.js"></script>
+    <script type="text/javascript">
+        function copyToClipboard(icon) {
+            const codeBlock = icon.nextElementSibling; // Find the <code> element
+            const code = codeBlock.innerText || codeBlock.textContent;
+            navigator.clipboard.writeText(code);
+            // Provide feedback to the user
+            icon.textContent = 'Copied!';
+            setTimeout(() => {
+                icon.textContent = 'Copy';
+            }, 2000); // Reset the icon text after 2 seconds
+        }
+        let snippet = FFTable({
+            fields: [
+                { title: 'Id', name: 'id', hidden: true },
+                { title: 'Title', name: 'title', searchable: true },
+                { title: 'Summary', name: 'summary', type: 'textarea', searchable: true },
+                { title: 'Content', name: 'content', type: 'textarea', formatter: v => v.length > 100 ? v.slice(0, 100) : v, attr: { rows: "10" } },
+                { title: 'Updated', name: 'updated', formatter: v => dayjs(v).format('YYYY-MM-DD'), virtual: true, },
+                { title: 'Updater', name: 'updater', virtual: true },
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/snippet/list',
+                addable: '{{ rbac_session_permission("snippet.edit") }}',
+                editable: '{{ rbac_session_permission("snippet.edit") }}',
+                deletable: '{{ rbac_session_permission("snippet.edit") }}',
+                printable: false,
+                exportable: false,
+                selection: 'single',
+                pageSize: 20,
+                sorting: 'multiple',
+                noDataMessage: '{{ t("table.no_data")}}',
+                rowClass: 'whitespace-nowrap',
+                toolbar: [{
+                    title: 'View',
+                    action(data) {
+                        view_snippet.$data.data = data;
+                        modal_snippet.open();
+                        var md = window.markdownit({
+                            highlight: function (str, lang) {
+                                if (lang && hljs.getLanguage(lang)) {
+                                    try {
+                                        return '<pre class="relative hljs not-format"><div class="copy-icon" onclick="copyToClipboard(this)">Copy</div><code class="language-' + lang + '">' +
+                                            hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                                            '</code></pre>';
+                                    } catch (__) { }
+                                }
+
+                                return '<pre class="relative hljs not-format"><div class="copy-icon" onclick="copyToClipboard(this)">Copy</div><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+                            }
+                        });
+
+                        var result = md.render(data.content);
+                        document.getElementById('snippet_div').innerHTML = `${result}`;
+                    },
+                    show(selection) { return selection },
+                    icon: '<svg class="h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>'
+                }]
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/snippet/edit',
+                object: 'Snippet',
+                size: 'normal', // small, normal, large, huge 
+                columns: 1,
+                pk: ['id'], // primary key
+            }
+        });
+        let view_snippet = {
+            code: '',
+        }
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

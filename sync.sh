@@ -1,5 +1,5 @@
 LOCAL=./
-REMOTE=fuwafuwa@fuwafuwa.web.id:www/framework/
+REMOTE=fuwafuwa@fuwafuwa.web.id:www/snippet.fuwafuwa.web.id/
 SRC="$LOCAL"
 DEST="$REMOTE"
 EXCLUDE="--exclude=.well-known --exclude=node_modules --exclude=tmp --exclude=fuwafuwa.db --exclude=.git --exclude=sync.sh --exclude=_docs --exclude=config.ini --exclude=.htaccess"
