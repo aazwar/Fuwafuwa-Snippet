@@ -1,0 +1,70 @@
+<f3:inject id="meta">
+  <title>{{@APP.title}}{{!empty(@REQUEST.t ??= '') ? ' Tag: ' . @REQUEST.t : ' '}} Halaman {{$pos+1}}</title>
+  <meta name="description"
+    content="{{@APP.title}}{{!empty(@REQUEST.t) ? ' Tag: ' . @REQUEST.t : ' '}} Halaman {{$pos+1}}" />
+  <meta name="keywords" content="{{@REQUEST.t}}" />
+  <meta name="copyright" content="{{ @APP.copyright }}" />
+  <meta name="robots" content="all" />
+</f3:inject>
+
+<f3:inject id="content">
+  <div class="card-content col-md-8 offset-md-2">
+    <div class="card-body">
+      <div class="row">
+        <h1>Jurnal {{@COMPANY.name}} #{{$pos+1}}</h1>
+        <check if="{{isset(@REQUEST.t)}}">
+          <div class="col-md-12">
+            <h2>Tag: {{@REQUEST.t}}</h2>
+          </div>
+        </check>
+        <repeat group="{{@subset}}" value="{{@post}}">
+          <div class="col-md-12 d-flex ftco-animate fadeInUp ftco-animated">
+            <div class="blog-entry align-self-stretch d-md-flex">
+              <a href="{{@BASE}}/post/{{@post.slug}}" class="block-20 lazy" data-src="{{@post.thumb2 ?? ''}}"
+                style="color: rgba(0, 0, 0, 0.0);">{{@post.slug}}</a>
+              <div class="text d-block pl-md-4">
+                <div class="meta mb-3">
+                  <div>{{date("d M Y H:i", strtotime(@post.published))}}</div>
+                </div>
+                <h3 class="heading"><a href="{{@BASE}}/post/{{@post.slug}}">{{@post.title}}</a></h3>
+                {{@post.summary | raw}}
+                <p><a href="{{@BASE}}/post/{{@post.slug}}" class="btn btn-primary py-2 px-3">Lebih Detail</a></p>
+              </div>
+            </div>
+          </div>
+        </repeat>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col text-center">
+          <div class="block-27">
+            <ul>
+              {~ $pagination = pagination($pos,$count); ~}
+              <check if="{{ $pos > 0}}">
+                <li><a href="{{@BASE}}/post?q={{@REQUEST.q ?? ''}}&t={{@REQUEST.t ?? ''}}">&laquo;</a></li>
+                <li><a href="{{@BASE}}/post?p={{$pos}}&q={{@REQUEST.q ?? ''}}&t={{@REQUEST.t ?? ''}}">&lsaquo;</a></li>
+              </check>
+              <repeat group="{{@pagination}}" value="{{@p}}">
+                {~ $active = ($p == $pos+1) ? ' class="active"' : ''; ~}
+                <check if="{{ @p == '...' }}">
+                  <true>
+                    <li><span>...</span></li>
+                  </true>
+                  <false>
+                    <li{{@active}}><a
+                        href="{{@BASE}}/post?p={{@p}}&q={{@REQUEST.q ?? ''}}&t={{@REQUEST.t ?? ''}}">{{@p}}</a>
+                      </li>
+                  </false>
+                </check>
+              </repeat>
+              <check if="{{ $pos < @count-1 }}">
+                <li><a href="{{@BASE}}/post?p={{$pos+2}}&q={{@REQUEST.q}}&t={{@REQUEST.t}}">&rsaquo;</a></li>
+                <li><a href="{{@BASE}}/post?p={{@count}}&q={{@REQUEST.q}}&t={{@REQUEST.t}}">&raquo;</a></li>
+              </check>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</f3:inject>

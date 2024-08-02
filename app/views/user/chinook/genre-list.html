@@ -1,0 +1,44 @@
+<f3:inject id="content">
+    <!-- Generated: 2022-08-12 16:03 -->
+    <h2 class="text-lg font-bold">Genre</h2>
+    <div x-data="genre">
+        <include href="blocks/table.html" />
+        <include href="blocks/modal-form.html" />
+    </div>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        let genre = FFTable({
+            fields: [
+                { title: 'GenreId', name: 'GenreId', hidden: true, readonly: true },
+                {
+                    title: 'Name', name: 'Name', raw: true, formatter(v, c, d) {
+                        return `<a href="{{@BASE}}/chinook/genre/${d.GenreId}" class="underline">${v}</a>`;
+                    }
+                },
+                { title: 'Tracks', name: 'Tracks', virtual: true }
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/chinook/genre/elist',
+                editable: true,
+                selection: 'single',
+                pageSize: 20,
+                sorting: 'multiple',
+                size: 'small'
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/chinook/genre/edit',
+                object: 'Genre',
+                size: 'normal', // small, normal, large, huge 
+                columns: 1,
+                pk: ['GenreId'], // primary key
+            }
+        })
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

@@ -1,0 +1,78 @@
+<!doctype html>
+<html dir="{{ @APP.lang == 'ar' ? 'rtl' : 'ltr' }}">
+
+<head>
+  <!-- meta -->
+  <f3:fragment id="meta" tag="FALSE" />
+  <!-- css -->
+  <f3:fragment id="style" tag="FALSE" />
+</head>
+
+<body class="bg-white dark:bg-black text-theme-text1 dark:text-theme-darkText1">
+  <div id="container" class="px-2 overflow-x-hidden">
+
+    <nav
+      class="max-w-screen-xl px-4 py-2 mx-auto border-gray-200 rounded-b-lg bg-theme-background1 dark:bg-theme-darkBackground1 dark:border-gray-700">
+      <div class="container flex flex-wrap items-center justify-between mx-auto">
+        <a href="{{@BASE}}/" class="flex items-center">
+          <!-- <img src="https://flowbite.com/docs/images/logo.svg" class="h-6 mr-3 sm:h-10" alt="Flowbite Logo"> -->
+          <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">{{@APP.title}}</span>
+        </a>
+        {~ (new \Theme\Menu)->printMobileMenu(@SESSION.group ?? '') ~}
+      </div>
+    </nav>
+    <!-- NAV START -->
+    <!-- NAV END -->
+
+    <!-- BODY START -->
+    <div class="py-2">
+      <div class="container flex justify-between pb-4 mx-auto">
+        <div class="w-full max-w-screen-xl mx-auto">
+          <div class="mt-2">
+            <div id="page-content"
+              class="px-4 py-2 bg-theme-background1 dark:bg-theme-darkBackground1 rounded-lg shadow-md md:h-full min-h-[70vh]">
+              <div class="min-h-[70vh] container mx-auto py-4">
+                <f3:fragment id="content" tag="FALSE" />
+                <check if="{{ isset(@content_html) }}">{{@content_html | raw }}</check>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER START -->
+    <footer
+      class="max-w-screen-xl p-4 mx-auto mb-4 rounded-lg shadow-md bg-theme-background1 md:flex md:items-center md:justify-between md:p-6 dark:bg-theme-darkBackground1">
+      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© {{ date('Y') }} {{ @COMPANY.name }}</a>.
+        All
+        Rights Reserved.
+      </span>
+      <ul class="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+        <check if="{{@WEBSITE.about_page}}">
+          <li>
+            <a href="{{@BASE}}/page/{{ @WEBSITE.about_page }}" class="mr-4 hover:underline md:mr-6 ">About</a>
+          </li>
+        </check>
+        <li>
+          <a href="{{@BASE}}/privacy" class="mr-4 hover:underline md:mr-6">Privacy Policy</a>
+        </li>
+        <li>
+          <a href="{{@BASE}}/terms" class="mr-4 hover:underline md:mr-6">Terms &amp; Conditions</a>
+        </li>
+        <check if="{{@WEBSITE.contact_page}}">
+          <li>
+            <a href="{{@BASE}}/page/{{ @WEBSITE.contact_page }}" class="hover:underline">Contact</a>
+          </li>
+        </check>
+      </ul>
+    </footer>
+    <!-- FOOTER END -->
+  </div>
+  <!-- BODY END -->
+  <f3:fragment id="script" tag="FALSE" />
+  <include href="{{@content}}" if="{{@content}}" />
+  <include href="blocks/core-js.html" />
+  <include href="blocks/core-css.html" />
+  <include if="{{empty(@post)}}" href="blocks/core-meta.html" />
+</body>

@@ -1,0 +1,141 @@
+<!-- autocomplete {{@title ?? ''}} -->
+{~
+
+if(!empty(@inline)) {
+$dclass = 'grid-cols-4 [&>:not(label)]:col-span-3';
+$lclass = 'text-right pr-2 py-2.5';
+$sclass = '!col-start-2';
+} else {
+$dclass = 'items-center';
+$lclass = '';
+$sclass = '';
+}
+$mark = !empty(@required) ? '<span class="text-theme-error">*</span>' : '';
+$values = str_replace('"', "'", json_encode($value));
+~}
+{~ if(empty(@lookupUrl)): ~}
+<div class="text-red-600">&lt;ff:srselect&gt; error: lookupUrl is required</div>
+{~ else: ~}
+<div class="grid gap-1 items-start content-start {{ @dclass }} {{@class ?? ''}}" {{ @coattr ?? '' | raw }} x-data="{ 
+        ac_show: false, 
+        label: '',
+        value: '', 
+        search: '',
+        suggestions: [], 
+        lookupUrl: '{{@lookupUrl}}',
+        search_change(value) {
+            fetch(this.lookupUrl + value).then(resp => resp.json()).then(data => this.suggestions = data);
+        }
+    }">
+    <label :for="$id('input')" class="input-label {{ @lclass }}">{{@title ?? ''}}</label>
+    <div class="relative">
+        <div class="relative w-full">
+            <div class="relative">
+                <button
+                    class="z-10 inline-flex items-center flex-shrink-0 w-full rounded-lg cursor-pointer hover:bg-gray-200 focus:ring-2 focus:ring-blue-500"
+                    x-on:click="ac_show = true" x-on:click.outside="ac_show = false"
+                    x-on:keydown.escape="ac_show = false">
+                    <div class="text-left input" x-text="value"></div>
+                    <svg class="absolute right-2.5 h-2.5 w-2.5" aria-hidden="true" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 4 4 4-4" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="absolute w-full" x-show="ac_show">
+            <div class="z-10 w-full bg-white rounded-b-lg shadow">
+                <div>
+                    <input class="input !p-1.5" placeholder="Search" x-on:input.debounce="search_change($el.value)" />
+                </div>
+                <ul class="px-3 pb-3 overflow-y-auto text-sm text-gray-700 max-h-48">
+                    <template x-for="opt in suggestions">
+                        <li>
+                            <div class="flex items-center rounded over:bg-gray-600 ps-2 hover:bg-gray-100"
+                                x-on:click="value = opt; ac_show = false">
+                                <span class="w-full py-2 text-sm font-medium text-gray-900 rounded ms-2"
+                                    x-text="opt"></span>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {~ if(!empty(@explanation) || !empty(@exattr)): ~}
+    <span class="text-xs {{ @sclass }}" {{ @exattr ?? '' | raw }}>{{@explanation ?? ''| raw}}</span>
+    {~ endif; ~}
+    {~ if(!empty(@errormodel)): ~}
+    <span class="text-xs text-theme-error dark:text-theme-darkError {{ @sclass }}" x-text="{{ @errormodel }}"></span>
+    {~ endif; ~}
+
+</div>
+{~ endif; ~}
+
+<!-- Pending: https://chatgpt.com/share/afdc4198-c5f4-416f-bade-01712af303f2 -->
+<!-- Testing in Tailwind play -->
+<div class="relative max-w-sm" id="parent">
+    <div class="relative w-full" id="pseudo-select">
+        <div class="relative">
+            <button id="states-button"
+                class="z-10 inline-flex items-center flex-shrink-0 w-full rounded-lg cursor-pointer hover:bg-gray-200 focus:ring-2 focus:ring-blue-500"
+                type="button">
+                <div class="text-left input">Value</div>
+                <svg class="absolute right-2.5 h-2.5 w-2.5" aria-hidden="true" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m1 1 4 4 4-4" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="absolute w-full pt-2" x-show="ac_show" id="dropdown">
+        <div class="z-10 w-full bg-white rounded-b-lg shadow">
+            <div class="">
+                <input class="input !p-1.5" placeholder="Search" />
+            </div>
+            <ul class="pb-3 overflow-y-auto text-sm text-gray-700 max-h-48">
+                <li>
+                    <div class="flex items-center rounded over:bg-gray-600 ps-2 hover:bg-gray-100"
+                        x-on:click="value = opt; ac_show = false">
+                        <span class="w-full py-2 text-sm font-medium text-gray-900 rounded ms-2" x-text="opt">Opt</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center rounded over:bg-gray-600 ps-2 hover:bg-gray-100"
+                        x-on:click="value = opt; ac_show = false">
+                        <span class="w-full py-2 text-sm font-medium text-gray-900 rounded ms-2" x-text="opt">Opt
+                            1</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center rounded over:bg-gray-600 ps-2 hover:bg-gray-100"
+                        x-on:click="value = opt; ac_show = false">
+                        <span class="w-full py-2 text-sm font-medium text-gray-900 rounded ms-2" x-text="opt">Opt
+                            2</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center rounded over:bg-gray-600 ps-2 hover:bg-gray-100"
+                        x-on:click="value = opt; ac_show = false">
+                        <span class="w-full py-2 text-sm font-medium text-gray-900 rounded ms-2" x-text="opt">Opt
+                            3</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center rounded over:bg-gray-600 ps-2 hover:bg-gray-100"
+                        x-on:click="value = opt; ac_show = false">
+                        <span class="w-full py-2 text-sm font-medium text-gray-900 rounded ms-2" x-text="opt">Opt
+                            4</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center rounded over:bg-gray-600 ps-2 hover:bg-gray-100"
+                        x-on:click="value = opt; ac_show = false">
+                        <span class="w-full py-2 text-sm font-medium text-gray-900 rounded ms-2" x-text="opt">Opt</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

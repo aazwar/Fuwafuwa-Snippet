@@ -1,0 +1,102 @@
+<div class="flex flex-col-reverse justify-between w-full lg:flex-row lg:items-center">
+    <div class="flex gap-0.5 h-14 lg:h-[72px] mb-1 rounded-sm bg-theme-background1 dark:bg-theme-darkBackground1"
+        x-show="table.showToolbar" x-cloak>
+        <template x-for="button in table.toolbar?.filter(e => e.first_position)">
+            <button type="button" x-on:click="button.action(data, $data)" class="toolbar-button"
+                x-show="button.show && button.show(selection.length, $data.data)" x-cloak>
+                <div class="h-6 lg:h-8" x-html="button.icon"></div>
+                <span x-text="button.title"></span>
+            </button>
+        </template>
+        <button type="button" x-on:click="table.functions.add?.() ?? addForm()" class="toolbar-button"
+            x-show="table.addable" x-cloak>
+            <div class="h-6 lg:h-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-full" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+            </div>
+            <span>{{ t('table.new_btn') }}</span>
+        </button>
+        <button type="button" x-on:click="table.functions.edit?.(data) ?? editForm()" class="toolbar-button"
+            x-show="table.editable && selection.length == 1" x-cloak>
+            <div class="h-6 lg:h-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-full" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+            </div>
+            <span>{{ t('table.edit_btn') }}</span>
+        </button>
+        <button type="button" x-on:click="table.functions.del?.(data) ?? deleteDialog()" class="toolbar-button"
+            x-show="table.deletable && selection.length == 1" x-cloak>
+            <div class="h-6 lg:h-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-full" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+            </div>
+            <span>{{ t('table.delete_btn') }}</span>
+        </button>
+        <button type="button" x-on:click="table.functions.print?.(rows) ?? window.print()" class="toolbar-button"
+            x-show="table.printable" x-cloak>
+            <div class="h-6 lg:h-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-full" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+            </div>
+            <span>{{ t('table.print_btn') }}</span>
+        </button>
+        <button type="button" x-on:click="table.functions.csv?.(rows) ?? saveCsv()" class="toolbar-button"
+            x-show="table.exportable" x-cloak>
+            <div class="h-6 lg:h-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-full" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                </svg>
+            </div>
+            <span>{{ t('table.csv_btn') }}</span>
+        </button>
+        <template x-for="button in table.toolbar.filter(e => !e.first_position)">
+            <button type="button" x-on:click="button.action(data, $data)" class="toolbar-button"
+                x-show="button.show && button.show(selection.length, $data.data)" x-cloak>
+                <div class="h-6 lg:h-8" x-html="button.icon"></div>
+                <span x-text="button.title"></span>
+            </button>
+        </template>
+    </div>
+    <div class="flex items-center gap-2 pb-4">
+        <label for="table-search" class="sr-only">{{ t('table.search') }}</label>
+        <div class="relative mt-1 max-w-fit" x-show="table.searchable && params.searchable.length" x-cloak>
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none" x-on:click="doSearch()">
+                <svg class="text-gray-500 size-5 dark:text-gray-400" aria-hidden="true" fill="currentColor"
+                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <input type="text" id="table-search" class="input !w-60 md:!w-80" placeholder="{{ t('table.search') }}"
+                x-model="params.search" x-on:input.debounce="doSearch()" autocomplete="off" spellcheck="false">
+        </div>
+        <button x-on:click="table.showFilter = !table.showFilter" x-show="params.filter.length" x-cloak>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                class="size-8 stroke-stone-400" :class="{'fill-stone-400' : params.filter.some(e => e.value)}">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+            </svg>
+        </button>
+    </div>
+</div>
+<div id="toolbar_popup"></div>

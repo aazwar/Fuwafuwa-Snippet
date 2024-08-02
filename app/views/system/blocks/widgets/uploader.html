@@ -1,0 +1,57 @@
+{~ if(empty(@section)): ~}
+<div class="text-red-600">&lt;ff:uploader&gt; error: section is required</div>
+{~ else: ~}
+<div class="grid items-start content-start gap-1">
+    <label :for="$id('input')" class="input-label">{{@title ?? ''}}</label>
+
+    <template x-if="!{{@section}}?.downloadkey">
+        <div>
+            <button type="button" class="button button-small"
+                x-on:click="uploadProcess('{{@title}}', 'UploadCallback', '{{@section}}')">Upload</button>
+        </div>
+    </template>
+    <template x-if="{{@section}}?.downloadkey">
+        <div class="w-full max-w-[320px] leading-1.5 col-span-2">
+            <div class="flex items-start w-full p-4 bg-gray-100 border-gray-200 dark:bg-gray-700 rounded-xl">
+                <div class="w-full me-2">
+                    <div class="flex items-center gap-2 pb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        <svg fill="currentColor" class="flex-shrink-0 size-5" viewBox="0 0 24 24">
+                            <use href="#file" />
+                        </svg>
+                        <div class="truncate" style="width: 155px;" x-text="{{@section}}.name"></div>
+                    </div>
+                    <div class="flex gap-2 text-xs font-normal text-gray-500 dark:text-gray-400">
+                        <span x-text="{{@section}}.meta?.hsize"></span>
+                        <svg class="self-center" width="3" height="4" viewBox="0 0 3 4" fill="none">
+                            <circle cx="1.5" cy="2" r="1.5" fill="#6B7280" />
+                        </svg>
+                        <span class="uppercase" x-text="{{@section}}.meta?.ext"></span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center self-center">
+                    <button
+                        class="inline-flex items-center self-center p-1 text-sm font-medium text-center text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200 dark:text-white dark:bg-gray-600 dark:hover:bg-gray-500"
+                        type="button">
+                        <svg class="text-gray-900 size-4 dark:text-white" fill="currentColor" viewBox="0 0 20 20"
+                            @click="download(downloadUrl + {{@section}}.downloadkey, {{@section}}.name)">
+                            <path
+                                d="M14.707 7.793a1 1 0 0 0-1.414 0L11 10.086V1.5a1 1 0 0 0-2 0v8.586L6.707 7.793a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.416 0l4-4a1 1 0 0 0-.002-1.414Z" />
+                            <path
+                                d="M18 12h-2.55l-2.975 2.975a3.5 3.5 0 0 1-4.95 0L4.55 12H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2Zm-3 5a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+                        </svg>
+                    </button>
+                    <button
+                        class="inline-flex items-center self-center p-1 text-sm font-medium text-center text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-600 dark:hover:bg-gray-500 dark:focus:ring-gray-600"
+                        type="button">
+                        <svg class="text-gray-900 size-4 dark:text-white" fill="currentColor" viewBox="0 0 32 32"
+                            @click="DeleteFile('{{@section}}')">
+                            <path
+                                d="M 16 3 C 8.832031 3 3 8.832031 3 16 C 3 23.167969 8.832031 29 16 29 C 23.167969 29 29 23.167969 29 16 C 29 8.832031 23.167969 3 16 3 Z M 16 5 C 22.085938 5 27 9.914063 27 16 C 27 22.085938 22.085938 27 16 27 C 9.914063 27 5 22.085938 5 16 C 5 9.914063 9.914063 5 16 5 Z M 12.21875 10.78125 L 10.78125 12.21875 L 14.5625 16 L 10.78125 19.78125 L 12.21875 21.21875 L 16 17.4375 L 19.78125 21.21875 L 21.21875 19.78125 L 17.4375 16 L 21.21875 12.21875 L 19.78125 10.78125 L 16 14.5625 Z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+{~ endif; ~}

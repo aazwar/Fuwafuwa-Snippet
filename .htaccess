@@ -1,0 +1,18 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule .* index.php [L,QSA]
+
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+Options -Indexes
+
+RedirectMatch 403 ^/app/
+RedirectMatch 403 ^/vendor/
+RedirectMatch 403 ^/sync.sh
+RedirectMatch 403 ^/package.json
+RedirectMatch 403 ^/composer.json
+
+Header always unset X-Frame-Options

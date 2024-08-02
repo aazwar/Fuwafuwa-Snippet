@@ -1,0 +1,55 @@
+{~
+switch(@size ?? '') {
+case 'small': $cls = 'max-w-md'; break;
+case 'large': $cls = 'max-w-4xl'; break;
+case 'huge': $cls = 'max-w-7xl'; break;
+default: $cls = 'max-w-lg';
+}
+~}
+<!-- MODAL {{@id}} START -->
+<template x-teleport="body">
+    <dialog id="modal-{{ @id }}" tabindex="-1" x-data="data_modal_{{@id}}"
+        class="w-full bg-transparent md:max-h-screen {{@cls}} overflow-hidden">
+        <!-- Modal content -->
+        <div class="w-full m-auto rounded-lg shadow-lg bg-stone-100 dark:bg-stone-700">
+            <!-- Modal header -->
+            <div
+                class="flex items-start justify-between px-4 py-2 border-b rounded-t-xl bg-theme-tableHeader dark:bg-theme-darkTableHeader text-theme-text1 dark:text-theme-darkText1">
+                <h3 class="flex-1 text-xl font-semibold text-gray-900 dark:text-white">{{@title ?? 'Modal'}}</h3>
+                <button type="button"
+                    class="inline-flex items-center p-1 ml-auto text-sm text-gray-400 bg-transparent rounded-lg hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+                    @click="close()">
+                    <svg class="size-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div class="bg-white dark:bg-black rounded-b-xl">
+                {{ @content|raw }}
+            </div>
+        </div>
+    </dialog>
+</template>
+<script>
+    let modal_{{@id}};
+    let data_modal_{{@id}} = {
+        modal: null,
+            callback: null,
+                init() {
+            this.modal = document.querySelector('#modal-{{@id}}');
+            eval(`modal_{{@id}} = this`);
+        },
+        open(callback) {
+            this.modal.showModal();
+            this.callback = callback;
+        },
+        close(data) {
+            this.modal.close();
+            isFunction(this.callback) && this.callback(data);
+        }
+    };    
+</script>
+<!-- MODAL {{@id}} END -->

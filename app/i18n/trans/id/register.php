@@ -1,0 +1,26 @@
+<?php
+
+return [
+  'account_active' => 'Akun aktif',
+  'activation' => 'Aktivasi',
+  'activation_email_sent' => 'Email aktivasi sudah dikirim ke {0}',
+  'activation_failed' => 'Aktivasi gagal!',
+  'activation_success' => 'Aktivasi sukses! Anda bisa login sekarang',
+  'address' => 'Alamat',
+  'email' => 'Email',
+  'email_registered' => 'Email {0} sudah pernah didaftarkan',
+  'email_reset_sent' => 'Tautan untuk mereset password sudah dikirim ke {0}',
+  'email_unregistered' => 'Email {0} belum pernah didaftarkan',
+  'failed' => 'Pendaftaran Gagal!',
+  'mobile' => 'HP',
+  'name' => 'Nama',
+  'password1' => 'Password',
+  'password2' => 'Konfirmasi Password',
+  'password_change' => 'Ganti Password',
+  'register' => 'Mendaftar',
+  'registration' => 'Pendaftaran Anggota',
+  'sign_in' => 'Masuk',
+  'success' => 'Pendaftaran Berhasil!',
+  'sudah_member' => 'Sudah jadi member?',
+  'user_activated' => 'User sudah diaktivasi',
+];

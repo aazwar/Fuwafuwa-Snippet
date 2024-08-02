@@ -1,0 +1,355 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number'] {
+        -webkit-appearance: none;
+        margin: 0;
+        -moz-appearance: textfield !important;
+    }
+
+    input[type='number'] {
+        text-align: right;
+    }
+
+    dialog::backdrop {
+        backdrop-filter: blur(8px);
+    }
+}
+
+/* badge */
+.badge {
+    @apply text-xs font-semibold px-2.5 py-0.5 rounded text-blue-800 bg-blue-100 dark:bg-blue-200 dark:text-blue-800 whitespace-nowrap;
+
+    &-blue {}
+
+    &-gray {
+        @apply text-gray-800 bg-gray-100 dark:bg-gray-700 dark:text-gray-300;
+    }
+
+    &-red {
+        @apply text-red-800 bg-red-100 dark:bg-red-200 dark:text-red-900;
+    }
+
+    &-green {
+        @apply text-green-800 bg-green-100 dark:bg-green-200 dark:text-green-900;
+    }
+
+    &-yellow {
+        @apply text-yellow-800 bg-yellow-100 dark:bg-yellow-200 dark:text-yellow-900;
+    }
+
+    &-indigo {
+        @apply text-indigo-800 bg-indigo-100 dark:bg-indigo-200 dark:text-indigo-900;
+    }
+
+    &-purple {
+        @apply text-purple-800 bg-purple-100 dark:bg-purple-200 dark:text-purple-900;
+    }
+
+    &-pink {
+        @apply text-pink-800 bg-pink-100 dark:bg-pink-200 dark:text-pink-900;
+    }
+}
+
+/* button */
+.button {
+    @apply py-2.5 px-5 text-sm text-center inline-flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg focus:outline-none;
+
+    &-tiny {
+        @apply px-2 py-1 text-xs;
+    }
+
+    &-small {
+        @apply py-1.5 px-3;
+    }
+
+    &-large {
+        @apply py-2.5 px-5;
+    }
+
+    &-huge {
+        @apply py-3.5 px-6;
+    }
+
+    &-black {
+        @apply bg-gray-800 hover:bg-gray-900 focus:ring-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700;
+    }
+
+    &-gray {
+        @apply text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700;
+    }
+
+    &-white {
+        @apply bg-gray-800 rounded-lg hover:bg-gray-900 focus:ring-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700;
+    }
+
+    &-green {
+        @apply bg-green-700 rounded-lg hover:bg-green-800 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800;
+    }
+
+    &-red {
+        @apply bg-red-700 rounded-lg hover:bg-red-800 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900;
+    }
+
+    &-yellow {
+        @apply bg-yellow-400 rounded-lg hover:bg-yellow-500 focus:ring-yellow-300 dark:focus:ring-yellow-900;
+    }
+
+    &-purple {
+        @apply bg-purple-700 hover:bg-purple-800 focus:ring-purple-300 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900;
+    }
+}
+
+.toolbar-button {
+    @apply inline-flex items-center min-w-[3rem] lg:min-w-[3.5rem] flex-col hover:bg-theme-background3 font-medium text-sm p-1.5 lg:p-2.5 text-center border-theme-border2 dark:hover:bg-theme-darkBackground3;
+}
+
+/* Alert */
+.alert {
+    @apply p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400;
+
+    &-border {
+        @apply border;
+    }
+
+    &-info {}
+
+    &-info&-border {
+        @apply border-blue-300;
+    }
+
+    &-danger {
+        @apply text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400;
+    }
+
+    &-danger&-border {
+        @apply border-red-300;
+    }
+
+    &-success {
+        @apply text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400;
+    }
+
+    &-success&-border {
+        @apply border-blue-300;
+    }
+
+    &-warning {
+        @apply text-yellow-800 bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300;
+    }
+
+    &-warning&-border {
+        @apply border-yellow-300;
+    }
+
+    &-dark {
+        @apply text-gray-800 bg-gray-50 dark:bg-gray-800 dark:text-gray-300;
+    }
+
+    &-dark&-border {
+        @apply border-gray-300;
+    }
+}
+
+/* Tab */
+.tab-container {
+    @apply flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400;
+}
+
+.tab {
+    @apply inline-block gap-2 px-4 py-2 border-transparent rounded-t-lg;
+
+    &-active {
+        @apply text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500 bg-sky-100;
+    }
+
+    &-disabled {
+        @apply text-gray-400 cursor-not-allowed dark:text-gray-500;
+    }
+}
+
+/* Input */
+.input {
+    @apply border border-theme-border1 bg-theme-inputBackground text-theme-inputText text-sm rounded-lg focus:ring-theme-focus focus:border-theme-focus block w-full dark:bg-theme-darkInputBackground dark:border-theme-border3 dark:text-theme-darkInputText disabled:cursor-not-allowed p-2.5;
+
+    &-small {
+        @apply p-1.5;
+    }
+
+    &-large {
+        @apply p-4;
+    }
+}
+
+.input-label {
+    @apply block text-sm font-medium text-gray-900 dark:text-gray-300;
+}
+
+.textarea {
+    @apply block p-2.5 w-full text-sm text-theme-inputText bg-theme-inputBackground rounded-lg border border-theme-border1 focus:ring-theme-focus focus:border-theme-focus dark:bg-theme-darkInputBackground dark:border-theme-border3 dark:text-theme-inputText disabled:cursor-not-allowed;
+}
+
+.content {
+    @apply text-theme-inputText dark:bg-theme-darkInputBackground block w-full bg-slate-200 p-1.5 text-sm rounded empty:before:content-['\00a0'];
+}
+
+.select {
+    @apply block w-full text-sm border rounded-lg bg-theme-inputBackground border-theme-border1 text-theme-inputText focus:ring-theme-focus focus:border-theme-focus dark:bg-theme-darkInputBackground dark:border-theme-darkInputBackground dark:text-theme-darkInputText dark:focus:ring-theme-focus dark:focus:border-theme-focus disabled:cursor-not-allowed;
+}
+
+.checkbox {
+    @apply text-blue-600 bg-gray-100 border-gray-300 rounded size-4 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600;
+}
+
+.radio {
+    @apply text-blue-600 size-4 bg-theme-inputBackground border-theme-border1 focus:ring-theme-focus dark:focus:ring-theme-focus focus:ring-2 dark:bg-theme-darkInputBackground dark:border-theme-border3 disabled:cursor-not-allowed;
+}
+
+/* Card */
+.card {
+    @apply block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700;
+}
+
+.card-image {
+    @apply w-full rounded-t-lg;
+}
+
+/* Typography */
+.list {
+    @apply max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400;
+}
+
+.h1 {
+    @apply text-5xl font-extrabold dark:text-white;
+}
+
+.h2 {
+    @apply text-4xl font-bold dark:text-white;
+}
+
+.h3 {
+    @apply text-3xl font-bold dark:text-white;
+}
+
+.h4 {
+    @apply text-2xl font-bold dark:text-white;
+}
+
+.h5 {
+    @apply text-xl font-bold dark:text-white;
+}
+
+.h6 {
+    @apply text-lg font-bold dark:text-white;
+}
+
+.p {
+    @apply text-gray-500 dark:text-gray-400;
+}
+
+.p:not(:last-child) {
+    @apply mb-3;
+}
+
+.progress {
+    @apply w-full bg-gray-200 rounded-full h-2.5 relative;
+    --value: 50;
+    --text: "";
+
+    &::before {
+        @apply block h-full bg-blue-300 rounded-full;
+        width: max(calc(var(--value) * 1%), 0.5%);
+        content: "";
+    }
+
+    &::after {
+        /* Styles for the text element */
+        @apply absolute z-10 flex items-center content-center justify-center w-full text-sm text-gray-400 top-0.5;
+        /* Adjust as needed */
+        content: var(--text);
+    }
+
+    &-small {
+        @apply h-1.5;
+    }
+
+    &-large {
+        @apply h-4;
+    }
+
+    &-huge {
+        @apply h-6;
+    }
+
+    &-red::before {
+        @apply bg-red-300;
+    }
+
+    &-gray::before {
+        @apply bg-gray-300;
+    }
+
+    &-green::before {
+        @apply bg-green-300;
+    }
+
+    &-yellow::before {
+        @apply bg-yellow-300;
+    }
+
+    &-indigo::before {
+        @apply bg-indigo-300;
+    }
+}
+
+/* Radial progress from DaisyUI */
+
+.radial-progress {
+    @apply relative inline-grid h-[var(--size)] w-[var(--size)] place-content-center rounded-full bg-transparent;
+    vertical-align: middle;
+    box-sizing: content-box;
+    --value: 0;
+    --size: 5rem;
+    --thickness: calc(var(--size) / 10);
+}
+
+.radial-progress::-moz-progress-bar {
+    @apply bg-transparent appearance-none;
+}
+
+.radial-progress::-webkit-progress-value {
+    @apply bg-transparent appearance-none;
+}
+
+.radial-progress::-webkit-progress-bar {
+    @apply bg-transparent appearance-none;
+}
+
+.radial-progress:before,
+.radial-progress:after {
+    @apply absolute bg-current rounded-full;
+    content: "";
+}
+
+.radial-progress:before {
+    @apply inset-0;
+    background:
+        radial-gradient(farthest-side, currentColor 98%, #0000) top/var(--thickness) var(--thickness) no-repeat,
+        conic-gradient(currentColor calc(var(--value) * 1%), #0000 0);
+    -webkit-mask: radial-gradient(farthest-side,
+            #0000 calc(99% - var(--thickness)),
+            #000 calc(100% - var(--thickness)));
+    mask: radial-gradient(farthest-side,
+            #0000 calc(99% - var(--thickness)),
+            #000 calc(100% - var(--thickness)));
+}
+
+.radial-progress:after {
+    inset: calc(50% - var(--thickness) / 2);
+    transform: rotate(calc(var(--value) * 3.6deg - 90deg)) translate(calc(var(--size) / 2 - 50%));
+}

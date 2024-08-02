@@ -1,0 +1,36 @@
+<f3:inject id="content">
+    <div class="flex min-h-[70vh]">
+        <div class="w-full max-w-sm m-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-700">
+            <div class="px-6 py-4" x-data>
+                <h2 class="text-3xl font-bold text-center text-gray-700 dark:text-gray-200">{{@APP.title}}</h2>
+                <p class="mt-1 text-center text-gray-500">{{ t('login.login_create') }}</p>
+                <form action="{{@BASE}}/login" method="POST">
+                    {~ @url = (@PARAMS[0] != '/login' ? @PARAMS[0] . (@QUERY ? "?" . @QUERY : "") : '/') ~}
+                    <ff:input name="username" title="{{t('login.username')}}" placeholder="{{ t('login.username') }}"
+                        autocomplete="off" required autofocus />
+                    <ff:input name="password" title="{{t('login.password')}}" placeholder="{{ t('login.password') }}"
+                        type="password" autocomplete="off" required autofocus class="mt-4" />
+                    <div class="flex items-center justify-between mt-4">
+                        <a href="{{@BASE}}/member/forgot-password"
+                            class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-500">{{
+                            t('login.forgot_password') }}</a>
+                        <input type="submit"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            value="{{ t('login.login') }}">
+                    </div>
+                    <div class="my-2 font-bold text-red-500">{{ @error_msg ?? ""}}</div>
+                    <input type="hidden" name="url" value="{{ @url }}">
+                </form>
+            </div>
+
+            <check if="{{@APP.registration}}">
+                <div class="flex items-center justify-center py-4 text-center bg-gray-100 dark:bg-gray-600">
+                    <span class="text-sm text-gray-600 dark:text-gray-300">{{ t('login.no_account') }}</span>
+                    <a href="{{@BASE}}/member/register"
+                        class="mx-2 text-sm font-bold text-blue-600 dark:text-blue-300 hover:text-blue-500 dark:hover:text-blue-400">{{
+                        t('login.register') }}</a>
+                </div>
+            </check>
+        </div>
+    </div>
+</f3:inject>

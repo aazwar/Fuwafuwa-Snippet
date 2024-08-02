@@ -1,0 +1,88 @@
+<!-- autocomplete {{@title ?? ''}} -->
+{~
+if(!empty($dboption)) {
+[$cls, $defaultv, $code_field, $name_field, $condition] = preg_split("/\|/", @dboption ?? '');
+$conds = array_filter(preg_split("/\s*#\s*/", $condition ?? ''), fn($e) => $e);
+@options = c('\Util\Html')->textOption($cls, $defaultv, $code_field, $name_field, $conds);
+}
+$loptions = preg_split("/\s*\|\s*/", @options ?? '');
+$label = [];
+$value = [];
+
+if(strpos($loptions[0], "#") > -1) {
+foreach($loptions as $opt) {
+[$l,$v] = explode("#", $opt);
+$label[] = $l;
+$value[] = $v;
+}
+} else {
+$label = $loptions;
+$value = $loptions;
+}
+
+if(!empty($dboptionblank)) {
+array_unshift($label, $dboptionblank);
+array_unshift($value, "");
+}
+
+if(!empty(@inline)) {
+$dclass = 'grid-cols-4 [&>:not(label)]:col-span-3';
+$lclass = 'text-right pr-2 py-2.5';
+$sclass = '!col-start-2';
+} else {
+$dclass = 'items-center';
+$lclass = '';
+$sclass = '';
+}
+$mark = !empty(@required) ? '<span class="text-theme-error">*</span>' : '';
+$values = str_replace('"', "'", json_encode($value));
+~}
+{~ if(empty(@options) && empty(@dboption) && empty(@lookupUrl)): ~}
+<div class="text-red-600">&lt;ff:autocomplete&gt; error: options/dboption/lookupUrl is required</div>
+{~ else: ~}
+<div class="grid gap-1 items-start content-start {{ @dclass }} {{@class ?? ''}}" {{ @coattr ?? '' | raw }} x-data="{ 
+        ac_show: false, 
+        value: '', 
+        init() { this.value = {{$default}} },
+        suggestions: {{ $values }}, 
+        get fval() { return this.value && !this.lookupUrl ? this.suggestions.filter(e => e.match(new RegExp(this.value, 'i'))) : this.suggestions } ,
+        lookupUrl: '{{@lookupUrl}}',
+        value_change(value) {
+            if(this.lookupUrl) {
+                fetch(this.lookupUrl + value).then(resp => resp.json()).then(data => this.suggestions = data);
+            } else {
+                this.value = value;
+            }
+        }
+    }">
+    <label :for="$id('input')" class="input-label {{ @lclass }}">{{@title ??
+        ''}}</label>
+    <div class="relative">
+        <input :id="$id('input')" class="input" {{ @attr ?? '' | raw }} x-on:click="ac_show = true"
+            x-on:click.outside="ac_show = false" x-modelable="value" x-on:input.debounce="value_change($el.value)"
+            x-on:keydown.escape="ac_show = false" x-on:keydown.tab="ac_show = false" />
+        <div class="absolute w-full" x-show="ac_show">
+            <div class="z-10 w-full bg-white rounded-b-lg shadow">
+                <ul class="px-3 pb-3 overflow-y-auto text-sm text-gray-700 max-h-48">
+                    <template x-for="opt in fval">
+                        <li>
+                            <div class="flex items-center rounded over:bg-gray-600 ps-2 hover:bg-gray-100"
+                                x-on:click="value = opt; ac_show = false">
+                                <span class="w-full py-2 text-sm font-medium text-gray-900 rounded ms-2"
+                                    x-text="opt"></span>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {~ if(!empty(@explanation) || !empty(@exattr)): ~}
+    <span class="text-xs {{ @sclass }}" {{ @exattr ?? '' | raw }}>{{@explanation ?? ''| raw}}</span>
+    {~ endif; ~}
+    {~ if(!empty(@errormodel)): ~}
+    <span class="text-xs text-theme-error dark:text-theme-darkError {{ @sclass }}" x-text="{{ @errormodel }}"></span>
+    {~ endif; ~}
+
+</div>
+{~ endif; ~}

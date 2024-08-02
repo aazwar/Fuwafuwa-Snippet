@@ -1,0 +1,44 @@
+<{f3:inject id="content"}>
+<!-- Generated: {{ date('Y-m-d H:i') }} -->
+  <h2 class="font-bold text-lg">{{ ucwords(@table) }}</h2>
+  <div x-data="{{ lcfirst(@table) }}">
+    <{include href="blocks/table.html" /}>
+    <{include href="blocks/modal-form.html" /}>
+  </div>
+<{/f3:inject}>
+<{f3:inject id="script"}>
+  <script src="{-{{@BASE}}-}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+    let {{ lcfirst(@table) }} = FFTable({
+      fields: [
+<repeat group="{{@fields}}" value="@field">
+        { title: '{{ucwords(@field)}}', name: '{{@field}}' },
+</repeat>      ],
+
+      // table options
+      table: {
+        url: '{-{{@BASE}}-}/ajax/{{@table}}/list',
+        addable: false,
+        editable: false,
+        deletable: false,
+        printable: true,
+        exportable: true,
+        selection: 'single',
+        pageSize: 20,
+        sorting: 'multiple',
+        noDataMessage: '{-{{ t("table.no_data")}}-}',
+        rowClass: 'whitespace-nowrap',
+      },
+
+      // form options
+      form: {
+        url: '{-{{@BASE}}-}/ajax/{{@table}}/edit',
+        object: '{{ucwords(@table)}}',
+        size: 'normal', // small, normal, large, huge 
+        columns: 1,
+        pk: ['{{@keys}}'], // primary key
+      }
+    });
+  </script>
+<{/f3:inject}>
+<{include href="blocks/popup.html" /}>

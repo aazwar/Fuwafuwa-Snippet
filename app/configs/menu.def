@@ -1,0 +1,12 @@
+{{ t('menu.content') }} | | icon=list
+  {{ t('menu.page') }} | page/table | icon=file
+  {{ t('menu.post') }} | post/table | icon=edit
+  {{ t('menu.media') }} | content/media
+  {{ t('menu.category') }} | content/category
+{{ t('menu.admin') }} | | icon = people
+  {{ t('menu.user') }} | user/user | icon=users
+  {{ t('menu.role') }} | user/roles | icon=user-circle
+  {{ t('menu.member') }} | user/member
+  {{ t('menu.preference') }} | admin/config | icon=setting
+Chinook | chinook
+Documentation | docs/

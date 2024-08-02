@@ -1,0 +1,8 @@
+{~
+\Cache::instance()->reset();
+$files = glob('tmp/*.php');
+array_walk($files, fn($file) => unlink($file));
+~}
+<f3:inject id="content">
+    Cache cleaned up.
+</f3:inject>

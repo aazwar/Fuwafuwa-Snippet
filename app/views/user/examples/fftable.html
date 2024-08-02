@@ -1,0 +1,136 @@
+<f3:inject id="content">
+    <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">FFTable with Complex Header</h1>
+    <div x-data="data">
+        <include href="blocks/table.html" />
+        <include href="blocks/modal-form.html" />
+    </div>
+</f3:inject>
+<f3:inject id="script" mode="append">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script>
+        let settings = {
+            fields: [
+                { title: 'City', name: 'city', },
+                { title: 'Trousers', name: 'trousers', type: 'number', },
+                { title: 'Skirts', name: 'skirts', type: 'number', },
+                { title: 'Dresses', name: 'dresses', type: 'number', },
+                { title: 'Bracelets', name: 'bracelets', type: 'number', },
+                { title: 'Rings', name: 'rings', type: 'number', },
+                { title: 'Max', name: '' }
+            ],
+
+            // table options
+            table: {
+                selection: 'single',
+                pageSize: 30,
+                display: 'compact',
+                class: {
+                },
+                rowClass(idx, row) {
+                    return {
+                        'whitespace-nowrap': true,
+                        'bg-blue-200': idx % 5 == 0
+                    };
+                },
+                cellClass(cidx, ridx, row, col) {
+                    return {
+                        'bg-red-200': ridx == 5 && cidx == 3,
+                        'bg-yellow-200': row[col] > 95,
+                    }
+                },
+                sorting: 'multiple',
+                size: 'small',
+                noDataMessage: '{{ t("table.no_data")}}',
+                filter: {
+                    cols: 2,
+                },
+                customHeader: [
+                    [
+                        { title: 'City', attr: { rowspan: 2 }, class: 'border-r border-t' },
+                        { title: 'Clothes', attr: { colspan: 3 }, class: 'border-r border-t' },
+                        { title: 'Accessories', attr: { colspan: 2 }, class: 'border-t' }
+                    ],
+                    [
+                        { title: 'Trousers', class: 'border-r' },
+                        { title: 'Skirts', class: 'border-r' },
+                        { title: 'Dresses', class: 'border-r' },
+                        { title: 'Bracelets', class: 'border-r' },
+                        { title: 'Rings' },
+                    ]
+                ],
+                data: [
+                    { "city": "Mandalay", "trousers": 79, "skirts": 16, "dresses": 14, "bracelets": 69, "rings": 99 },
+                    { "city": "George Town", "trousers": 68, "skirts": 24, "dresses": 90, "bracelets": 96, "rings": 48 },
+                    { "city": "Gent", "trousers": 26, "skirts": 60, "dresses": 67, "bracelets": 5, "rings": 43 },
+                    { "city": "Mombasa", "trousers": 34, "skirts": 62, "dresses": 18, "bracelets": 75, "rings": 78 },
+                    { "city": "Lyon", "trousers": 13, "skirts": 33, "dresses": 12, "bracelets": 0, "rings": 17 },
+                    { "city": "Vancouver", "trousers": 82, "skirts": 91, "dresses": 18, "bracelets": 96, "rings": 72 },
+                    { "city": "Cairn", "trousers": 64, "skirts": 43, "dresses": 14, "bracelets": 95, "rings": 55 },
+                    { "city": "Lucknow", "trousers": 82, "skirts": 24, "dresses": 41, "bracelets": 69, "rings": 82 },
+                    { "city": "Vigan", "trousers": 74, "skirts": 22, "dresses": 54, "bracelets": 61, "rings": 12 },
+                    { "city": "Luang Prabang", "trousers": 78, "skirts": 37, "dresses": 23, "bracelets": 50, "rings": 17 },
+                    { "city": "Danang", "trousers": 15, "skirts": 41, "dresses": 61, "bracelets": 65, "rings": 3 },
+                    { "city": "Rio de Janeiro", "trousers": 56, "skirts": 94, "dresses": 50, "bracelets": 9, "rings": 97 },
+                    { "city": "Kisumu", "trousers": 89, "skirts": 43, "dresses": 45, "bracelets": 70, "rings": 43 },
+                    { "city": "Edinburgh", "trousers": 16, "skirts": 75, "dresses": 31, "bracelets": 1, "rings": 0 },
+                    { "city": "Antwerp", "trousers": 22, "skirts": 87, "dresses": 71, "bracelets": 27, "rings": 16 },
+                    { "city": "Brussels", "trousers": 6, "skirts": 41, "dresses": 64, "bracelets": 22, "rings": 97 },
+                    { "city": "Kyoto", "trousers": 0, "skirts": 57, "dresses": 92, "bracelets": 33, "rings": 86 },
+                    { "city": "Buenos Aires", "trousers": 56, "skirts": 14, "dresses": 63, "bracelets": 48, "rings": 67 },
+                    { "city": "Mwanza", "trousers": 24, "skirts": 14, "dresses": 5, "bracelets": 96, "rings": 62 },
+                    { "city": "Yangon", "trousers": 70, "skirts": 93, "dresses": 73, "bracelets": 85, "rings": 85 },
+                    { "city": "Manado", "trousers": 10, "skirts": 32, "dresses": 45, "bracelets": 86, "rings": 52 },
+                    { "city": "Gisenyi", "trousers": 73, "skirts": 50, "dresses": 17, "bracelets": 30, "rings": 37 },
+                    { "city": "Durban", "trousers": 58, "skirts": 15, "dresses": 43, "bracelets": 94, "rings": 5 },
+                    { "city": "Seattle", "trousers": 90, "skirts": 30, "dresses": 31, "bracelets": 88, "rings": 87 },
+                    { "city": "Marrakech", "trousers": 5, "skirts": 26, "dresses": 81, "bracelets": 51, "rings": 69 },
+                    { "city": "Kuching", "trousers": 72, "skirts": 25, "dresses": 66, "bracelets": 41, "rings": 1 },
+                    { "city": "Amsterdam", "trousers": 13, "skirts": 40, "dresses": 47, "bracelets": 31, "rings": 18 },
+                    { "city": "Ljubljana", "trousers": 63, "skirts": 31, "dresses": 88, "bracelets": 23, "rings": 25 },
+                    { "city": "Chiang Mai", "trousers": 45, "skirts": 10, "dresses": 21, "bracelets": 69, "rings": 0 },
+                    { "city": "Banaue", "trousers": 96, "skirts": 20, "dresses": 95, "bracelets": 68, "rings": 75 },
+                    { "city": "Istanbul", "trousers": 84, "skirts": 2, "dresses": 98, "bracelets": 1, "rings": 96 },
+                    { "city": "Reykjavik", "trousers": 71, "skirts": 90, "dresses": 94, "bracelets": 66, "rings": 53 },
+                    { "city": "Siem Reap", "trousers": 8, "skirts": 58, "dresses": 9, "bracelets": 82, "rings": 92 },
+                    { "city": "Kinabalu", "trousers": 0, "skirts": 37, "dresses": 46, "bracelets": 47, "rings": 14 },
+                    { "city": "Phuket", "trousers": 38, "skirts": 91, "dresses": 79, "bracelets": 47, "rings": 66 },
+                    { "city": "Ulaanbaatar", "trousers": 11, "skirts": 92, "dresses": 15, "bracelets": 5, "rings": 9 },
+                    { "city": "Utrecht", "trousers": 72, "skirts": 8, "dresses": 27, "bracelets": 50, "rings": 14 },
+                    { "city": "Hanoi", "trousers": 98, "skirts": 69, "dresses": 28, "bracelets": 92, "rings": 76 },
+                    { "city": "Helsinki", "trousers": 61, "skirts": 58, "dresses": 59, "bracelets": 28, "rings": 26 },
+                    { "city": "Oaxaca", "trousers": 97, "skirts": 23, "dresses": 75, "bracelets": 41, "rings": 34 }
+                ],
+                footerData: [
+                    [
+                        { value: 'Sum', class: 'text-right font-bold', },
+                        { name: 'sum-trousers', value: 10, class: 'text-right' },
+                        { name: 'sum-skirts', value: 10, class: (v) => ({ 'text-right': true, 'italic': v < 1000 }), formatter: (v) => v + 5 },
+                        { name: 'sum-dresses', value: 10, class: 'text-right' },
+                        { name: 'sum-bracelets', value: 10, class: 'text-right' },
+                        { name: 'sum-rings', value: 10, class: 'text-right' },
+                    ],
+                    [
+                        { value: 'Total', class: 'text-right font-bold', },
+                        { name: 'total-trousers', value: 10, class: 'text-right' },
+                        { name: 'total-skirts', value: 10, class: 'text-right', formatter: v => v + 5 },
+                        { name: 'total-dresses', value: 10, class: 'text-right' },
+                        { name: 'total-bracelets', value: 10, class: 'text-right' },
+                        { name: 'total-rings', value: 10, class: 'text-right' },
+                    ],
+                ],
+                tableInit($data) {
+                    ['trousers', 'skirts', 'dresses', 'bracelets', 'rings'].forEach(e => {
+                        $data.setFooterVal('total-' + e, $data.table.data.map(f => f[e]).reduce((a, c) => a + c, 0));
+                    });
+                },
+                afterFetch(param) {
+                    let xdata = data.$data;
+                    ['trousers', 'skirts', 'dresses', 'bracelets', 'rings'].forEach(e => {
+                        xdata.setFooterVal('sum-' + e, xdata.rows.map(f => f[e]).reduce((a, c) => a + c, 0));
+                    })
+                }
+            },
+        }
+        let data = FFTable(settings);
+    </script>
+</f3:inject>

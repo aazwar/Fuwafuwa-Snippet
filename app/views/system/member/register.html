@@ -1,0 +1,59 @@
+<f3:inject id="content">
+    <section class="max-w-md px-4 py-6 mx-auto" x-data="data">
+        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">{{ t('register.registration') }}
+        </h1>
+        <div class="grid grid-cols-1 gap-2 mt-4">
+            <ff:input x-model="data.name" placeholder="Nama Lengkap" autocomplete="off" required autofocus
+                title="{{ t('register.name') }}" />
+            <ff:input x-model="data.email" type="email" placeholder="nama@email.com" autocomplete="off" required
+                title="{{ t('register.email') }}" />
+            <ff:textarea x-model="data.address"
+                placeholder="Jl Contoh 100, Kelurahan, Kecamatan, Kota Kabupaten, Propinsi" required
+                title="{{ t('register.address') }}" />
+            <ff:input x-model="data.mobile" placeholder="Format: +62-857-0000-0000" autocomplete="off" required
+                title="{{ t('register.mobile') }}" />
+            <ff:input x-model="data.password1" type="password" autocomplete="off" required
+                title="{{ t('register.password1') }}" />
+            <ff:input x-model="data.password2" type="password" autocomplete="off" required
+                title="{{ t('register.password2') }}" />
+        </div>
+
+        <div class="flex items-center justify-end mt-6">
+            <ff:spinner x-show="submitting" x-cloak />
+            <button class="button" :disabled="Boolean(submitting)"
+                @click="register()">{{t('register.register')}}</button>
+        </div>
+        <div class="flex items-center justify-center py-4 mt-4 text-center bg-gray-100 dark:bg-gray-600">
+            <span class="text-sm text-gray-600 dark:text-gray-300">{{t('register.sudah_member')}}</span>
+            <a href="{{@BASE}}/login"
+                class="mx-2 text-sm font-bold text-blue-600 dark:text-blue-300 hover:text-blue-500 dark:hover:text-blue-400">{{t('register.sign_in')}}</a>
+        </div>
+    </section>
+</f3:inject>
+
+<f3:inject id="script" mode="append">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        const data = {
+            data: {
+                name: '',
+                email: '',
+                address: '',
+                mobile: '',
+                password1: '',
+                password2: '',
+            },
+            errors: {},
+            submitting: false,
+            register() {
+                this.submitting = true;
+                fetchData('{{ @BASE }}/ajax/member/register', this.data).then(
+                    resp => popupInfo(resp.join('<br>'), '', () => location.href = '{{@BASE}}/'),
+                    errors => popupError(errors.join("\n"), '', () => this.submitting = false)
+                )
+            }
+        };
+
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

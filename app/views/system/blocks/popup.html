@@ -1,0 +1,226 @@
+<f3:inject id="content" mode="append">
+    <dialog id="popup-modal" tabindex="-1" x-data="popupModal" class="w-full bg-transparent md:max-h-screen"
+        :class="prop.width">
+        <div class="w-full m-auto rounded-lg shadow-lg bg-stone-100 dark:bg-stone-700">
+            <div class="p-6 text-center border rounded-lg">
+                <template x-if="prop.type == 'info'">
+                    <svg class="mx-auto text-blue-400 size-14 dark:text-blue-200" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </template>
+                <template x-if="prop.type == 'warning'">
+                    <svg class="mx-auto text-yellow-400 size-14 dark:text-yellow-200" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </template>
+                <template x-if="prop.type == 'error'">
+                    <svg class="mx-auto text-red-400 size-14 dark:text-red-200" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                </template>
+                <template x-if="prop.type == 'confirm'">
+                    <svg class="mx-auto text-gray-400 size-14 dark:text-gray-200" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </template>
+                <h3 class="py-2 text-xl font-bold text-gray-400 dark:text-gray-500" x-text="prop.title"></h3>
+                <h4 class="w-full mx-2 mb-5 text-lg font-normal text-gray-500 dark:text-gray-400"
+                    x-bind:class="prop.align == 'left' ? 'text-left' : 'text-center'">
+                    <ul x-html="prop.message" class="text-sm list-disc"></ul>
+                </h4>
+                <div class="grid gap-2 mb-4">
+                    <template x-for="(input, index) in prop.inputs" :key="index">
+                        <div class="grid grid-cols-4">
+                            <label :for="'input_' + input.col"
+                                class="block text-sm font-medium text-gray-900 dark:text-white text-right pr-1 py-2.5 whitespace-nowrap"
+                                x-text="input.title"></label>
+                            <!-- checkbox -->
+                            <template x-if="input.type == 'checkbox'">
+                                <input :id="'input_' + input.col" type="checkbox" x-bind:checked="Boolean(input.value)"
+                                    value="1" x-on:change="input.value = $el.checked ? $el.value : null"
+                                    class="input disabled:cursor-not-allowed my-2.5 col-span-3"
+                                    x-init="input.attr && Object.keys(input.attr).forEach(e => $el.setAttribute(e, input.attr[e]))">
+                            </template>
+                            <!-- input -->
+                            <template
+                                x-if="['number', 'date', 'datetime-local', 'email', 'month', 'password', 'tel', 'time', 'text', 'url', 'week'].includes(input.type)">
+                                <input :type="input.type || 'text'" :id="'input_' + input.col" x-model="input.value"
+                                    class="col-span-3 input disabled:opacity-30 disabled:cursor-not-allowed"
+                                    autocomplete="off">
+                            </template>
+                            <!-- file -->
+                            <template x-if="input.type == 'file'">
+                                <div class="flex gap-2">
+                                    <input x-bind:type="input.type" :id="'input_' + input.col"
+                                        x-on:change="input.value = Object.values($event.target.files)"
+                                        class="flex-1 block w-full col-span-3 text-sm border rounded-lg cursor-pointer text-theme-inputText bg-theme-inputBackground border-theme-border1 dark:text-theme-darkInputText focus:outline-none dark:bg-theme-darkInputBackground dark:border-theme-border3 disabled:cursor-not-allowed"
+                                        x-bind:disabled="Boolean(isFunction(input.readonly) ? input.readonly(form) : input.readonly)"
+                                        autocomplete="off"
+                                        x-init="input.attr && Object.keys(input.attr).forEach(e => $el.setAttribute(e, input.attr[e]))">
+                                    <button
+                                        x-on:click="input.value = null; document.getElementById(`input_${input.col}`).value = ''">
+                                        <svg class="size-6 text-theme-text3 dark:text-theme-darkText3"
+                                            aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </template>
+                            <!-- select -->
+                            <template x-if="input?.type?.match(/select/)">
+                                <select :id="'input_' + input.col" x-model="input.value"
+                                    class="col-span-3 select p-2.5">
+                                    <template x-for="option in input.options">
+                                        <option x-bind:value="option.value" x-text="option.label"
+                                            x-bind:selected="option.value == input.value">
+                                        </option>
+                                    </template>
+                                </select>
+                            </template>
+                            <template x-if="input.type == 'textarea'">
+                                <textarea rows="4" x-bind:name="input.name" x-model="input.value"
+                                    class="col-span-3 textarea disabled:cursor-not-allowed"
+                                    x-init="input.attr && Object.keys(input.attr).forEach(e => $el.setAttribute(e, input.attr[e]))"></textarea>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+                <div class="flex justify-center gap-2">
+                    <template x-for="button in prop.buttons">
+                        <button class="button min-w-[6rem] justify-center" x-text="button.title" :class="{
+                                    'button-blue': button.type == 'ok',
+                                    'button-red': button.type == 'cancel',
+                                    'button-gray': !button.type
+                                }" x-on:click="button.onclick" />
+                    </template>
+                </div>
+            </div>
+        </div>
+    </dialog>
+</f3:inject>
+<f3:inject id="script" mode="append">
+    <!-- Popup Modal -->
+    <script>
+        let popupXdata;
+        const popupModal = {
+            modal: null,
+            prop: {},
+            show(opt) {
+                let defProp = {
+                    align: 'left',
+                    title: '',
+                    type: 'info', // warning, error, confirm
+                    message: '',
+                    inputs: [], // { col: '', title: '', type: '' }
+                    buttons: [
+                        {
+                            title: 'Ok',
+                            type: 'ok',
+                            onclick() {
+                                this.close()
+                            }
+                        }
+                    ],
+                    width: 'max-w-md'
+                };
+                Object.assign(this.prop, defProp, opt);
+                this.modal.showModal();
+            },
+            inputValues() {
+                return this.prop.inputs.reduce((acc, curr) => ({ ...acc, [curr.col]: curr.value }), {});
+            },
+            close() {
+                this.modal.close();
+            },
+            init() {
+                this.modal = document.getElementById("popup-modal");
+                popupXdata = this;
+                showPopup.bind(this);
+            }
+        }
+
+        function showPopup(opt) {
+            popupXdata.show(opt);
+        }
+
+        function popupDialog(title, message, action, inputs = []) {
+            showPopup({
+                title: title || 'Konfirmasi',
+                message,
+                type: 'confirm',
+                buttons: [
+                    {
+                        title: 'Ok',
+                        type: 'ok',
+                        onclick() {
+                            action(this.inputValues());
+                            this.close();
+                        }
+                    },
+                    {
+                        title: 'Cancel',
+                        type: 'cancel',
+                        onclick() {
+                            this.close()
+                        }
+                    }
+                ],
+                inputs
+            })
+        }
+
+        function popupError(message, title, action) {
+            if (action) {
+                let buttons = [
+                    {
+                        title: 'Ok',
+                        type: 'cancel',
+                        onclick() {
+                            action(this.inputValues());
+                            this.close()
+                        }
+                    }
+                ];
+                showPopup({ title: title || 'Error', message, type: 'error', buttons })
+            } else {
+                showPopup({ title: title || 'Error', message, type: 'error' })
+            }
+        }
+
+        function popupInfo(message, title, action) {
+            if (action) {
+                let buttons = [
+                    {
+                        title: 'Ok',
+                        type: 'ok',
+                        onclick() {
+                            action(this.inputValues());
+                            this.close()
+                        }
+                    }
+                ];
+                showPopup({ title: title || 'Information', message, type: 'info', buttons })
+            } else {
+                showPopup({ title: title || 'Information', message, type: 'info' })
+            }
+        }
+    </script>
+</f3:inject>

@@ -1,0 +1,47 @@
+<!-- input {{@title ?? ''}} -->
+{~ if(!empty(@floating)): ~}
+{~ @type ??= "text"; ~}
+<div class="relative" x-id="['input']">
+    <label :for="$id('input')" class="input-label absolute left-2 -top-2 px-1 bg-white !text-xs">{{@title ??
+        ''}}</label>
+    <input :id="$id('input')" class="input" type="{{@type}}" {{ @attr ?? '' | raw }} />
+    {~ if(!empty(@explanation)): ~}
+    <span class="text-xs {{ @sclass }}">{{@explanation | raw}}</span>
+    {~ endif; ~}
+    {~ if(!empty(@errormodel)): ~}
+    <span class="mt-2 text-xs text-theme-error dark:text-theme-darkError" x-text="{{@errormodel}}"></span>
+    {~ endif; ~}
+</div>
+{~ else: ~}
+{~
+switch(@size ?? '') {
+case 'small': $isize = 'input-small'; break;
+case 'large': $isize = 'input-large'; break;
+default: $isize = '';
+}
+if(!empty(@class)) {
+$isize .= " @class";
+}
+if(!empty(@inline)) {
+$dclass = 'grid-cols-4 [&>:not(label)]:col-span-3';
+$lclass = 'text-right pr-2 py-2.5';
+$sclass = '!col-start-2';
+} else {
+$dclass = '';
+$lclass = '';
+$sclass = '';
+}
+$mark = !empty(@required) ? '<span class="text-theme-error">*</span>' : '';
+~}
+<div class="grid gap-1 items-start content-start {{ @dclass }} {{@class ?? ''}}" x-id="['input']" {{ @coattr ?? '' | raw
+    }}>
+    <label :for="$id('input')" class="input-label {{ @lclass }}">{{@title ?? ''}} {{$mark}}</label>
+    <input :id="$id('input')" type="{{@type}}" class="input {{$isize}}" {{ @attr ?? '' | raw }}>
+    {~ if(!empty(@explanation) || !empty(@exattr)): ~}
+    <span class="text-xs {{ @sclass }}" {{ @exattr ?? '' | raw }}>{{@explanation ?? ''| raw}}</span>
+    {~ endif; ~}
+    {~ if(!empty(@errormodel)): ~}
+    <span class="text-xs text-theme-error dark:text-theme-darkError {{ @sclass }}" x-text="{{@errormodel}}"></span>
+    {~ endif; ~}
+</div>
+{~ endif; ~}

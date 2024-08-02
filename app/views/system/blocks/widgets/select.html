@@ -1,0 +1,56 @@
+<!-- select {{@title ?? ''}} -->
+{~
+if(!empty($dboption)) {
+[$cls, $default, $code_field, $name_field, $condition] = preg_split("/\|/", @dboption ?? '');
+$conds = array_filter(preg_split("/\s*#\s*/", $condition ?? ''), fn($e) => $e);
+@options = c('\Util\Html')->textOption($cls, $default, $code_field, $name_field, $conds);
+}
+$loptions = preg_split("/\s*\|\s*/", @options ?? '');
+$label = [];
+$value = [];
+
+if(strpos($loptions[0], "#") > -1) {
+foreach($loptions as $opt) {
+[$l,$v] = explode("#", $opt);
+$label[] = $l;
+$value[] = $v;
+}
+} else {
+$label = $loptions;
+$value = $loptions;
+}
+
+if(!empty($dboptionblank)) {
+array_unshift($label, $dboptionblank);
+array_unshift($value, "");
+}
+
+if(!empty(@inline)) {
+$dclass = 'grid-cols-4 [&>:not(label)]:col-span-3';
+$lclass = 'text-right pr-2 py-2.5';
+$sclass = '!col-start-2';
+} else {
+$dclass = 'items-center';
+$lclass = '';
+$sclass = '';
+}
+$mark = !empty(@required) ? '<span class="text-theme-error">*</span>' : '';
+~}
+{~ if(empty(@options) && empty(@dboption)): ~}
+<div class="text-red-600">&lt;ff:select&gt; error: options is required</div>
+{~ else: ~}
+<div class="grid gap-1 items-start content-start {{ @dclass }} {{@class ?? ''}}" {{ @coattr ?? '' | raw }}>
+    <label :for="$id('input')" class="input-label {{ @lclass }}">{{@title ?? ""}} {{$mark}}</label>
+    <select class="select disabled:cursor-not-allowed" {{ @attr ?? '' | raw }}>
+        {~ foreach($value as $i => $v): ~}
+        <option value="{{ $v }}">{{ $label[@i] }}</option>
+        {~ endforeach; ~}
+    </select>
+    {~ if(!empty(@explanation) || !empty(@exattr)): ~}
+    <span class="text-xs {{ @sclass }}" {{ @exattr ?? '' | raw }}>{{@explanation ?? ''| raw}}</span>
+    {~ endif; ~}
+    {~ if(!empty(@errormodel)): ~}
+    <span class="text-xs text-theme-error dark:text-theme-darkError {{ @sclass }}" x-text="{{ @errormodel }}"></span>
+    {~ endif; ~}
+</div>
+{~ endif; ~}

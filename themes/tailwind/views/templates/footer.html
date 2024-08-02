@@ -1,0 +1,25 @@
+<!-- FOOTER START -->
+<footer class="p-2 bg-white md:px-6 md:py-4 dark:bg-black md:flex md:items-center md:justify-between">
+    <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+        © {{ date('Y') }} {{ @COMPANY.name }}. All Rights Reserved. Tailwind Template.
+    </span>
+    <ul class="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+        <check if="{{@WEBSITE.about_page}}">
+            <li>
+                <a href="{{@BASE}}/page/{{ @WEBSITE.about_page }}" class="mr-4 hover:underline md:mr-6 ">About</a>
+            </li>
+        </check>
+        <li>
+            <a href="{{@BASE}}/privacy" class="mr-4 hover:underline md:mr-6">Privacy Policy</a>
+        </li>
+        <li>
+            <a href="{{@BASE}}/terms" class="mr-4 hover:underline md:mr-6">Terms &amp; Conditions</a>
+        </li>
+        <check if="{{@WEBSITE.contact_page}}">
+            <li>
+                <a href="{{@BASE}}/page/{{ @WEBSITE.contact_page }}" class="hover:underline">Contact</a>
+            </li>
+        </check>
+    </ul>
+</footer>
+<!-- FOOTER END -->

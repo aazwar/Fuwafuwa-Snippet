@@ -1,0 +1,58 @@
+<f3:inject id="meta">
+    <base href="{{@BASE}}/">
+    <!-- <base href="{{@BASE}}/"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>{{@APP.title}} – {{ @post.title }}</title>
+    <link rel="canonical" href="{{@ROOT_URL}}/post/{{@post.slug}}" />
+    <meta name="description" content="{{ trim(@post.summary) }}" />
+    <meta name="keywords" content="{{ @post.keyword }}" />
+    <meta name="copyright" content="{{ @APP.copyright }}" />
+    <meta name="robots" content="all" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{@REALM}}">
+    <meta property="og:title" content="{{@post.title}}">
+    <meta property="og:description" content="{{trim(@post.summary)}}">
+    <meta property="og:image" content="{{@post.thumb ?? ''}}">
+    <meta property="article:tag" content="{{@post.keyword}}">
+    <meta property="article:published_time" content="{{@post.published}}">
+    <meta property="article:modified_time" content="{{@post.updated}}">
+    <meta property="article:author" content="{{@COMPANY.name}}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{@REALM}}">
+    <meta property="twitter:title" content="{{@post.title}}">
+    <meta property="twitter:description" content="{{trim(@post.summary)}}">
+    <meta property="twitter:image" content="{{@post.thumb ?? ''}}">
+    <include href="blocks/post-ld-json.html" />
+    <include if="{{!empty(@post.ytid)}}" href="blocks/video-ld-json.html"
+        with="ld_title={{@post.title}},ld_deskripsi={{trim(@post.summary)}}, ld_ytid={{@post.ytid}}, ld_tanggal={{@post.published}}, ld_count={{@post.view}}" />
+</f3:inject>
+<f3:inject id="content">
+    <div class="flex justify-center w-full px-6 py-4">
+        <div class="format lg:format-lg dark:format-invert">
+            <h1>{{@post.title}}</h1>
+            <div id="post-content">
+                {{@post.content | raw }}
+            </div>
+            <br />
+            <i>{{ t('content.post.publish') }} {{date("d M Y H:i", strtotime(@post.published ?: @post.updated ?:
+                @post.created))}}, dilihat: {{@post.views}} kali</i>
+            <check if="{{rbac_session_permission('post.edit')}}">
+                <div class="mt-4">
+                    <button class="button button-gray"
+                        onclick="location.href = '{{@BASE}}/post/edit?id={{@post.id}}'">{{ t('common.edit') }}</button>
+                </div>
+            </check>
+        </div>
+    </div>
+</f3:inject>
+<f3:inject id="script" mode="append">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    {{'<scr'.'ipt>' }} {{ @post.script ?? '' | raw }} </script>
+</f3:inject>

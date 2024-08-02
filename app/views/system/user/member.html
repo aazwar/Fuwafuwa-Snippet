@@ -1,0 +1,76 @@
+<f3:inject id="content">
+    <div class="px-4 py-6">
+        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Member</h1>
+        <div x-data="data">
+            <include href="blocks/table.html" />
+            <include href="blocks/modal-form.html" />
+        </div>
+    </div>
+</f3:inject>
+<f3:inject id="script" mode="append">
+    <set members="{{ c('\Fuwafuwa\Service\Config')->load_pref()['APP']['member_type'] }}" />
+    <set member_opts='{{ str_replace("\n", "|", $members) }}' />
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        dayjs.locale('{{@APP.lang}}')
+        const number = new Intl.NumberFormat('{{ @APP.lang_loc }}', {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        });
+
+        let settings = {
+            fields: [
+                { title: 'ID', name: 'id', hidden: true },
+                { title: '{{ t("register.name") }}', name: 'name', class: 'whitespace-nowrap' },
+                { title: '{{ t("register.email") }}', name: 'email', readonly(f) { return f.oper != 'add' } },
+                { title: '{{ t("register.address") }}', name: 'address', class: 'whitespace-nowrap', type: 'textarea', sortable: false },
+                { title: '{{ t("register.mobile") }}', name: 'mobile', sortable: false },
+                { title: 'Role', name: 'role', type: 'select', options: '|{{ $member_opts }}' },
+                {
+                    title: 'Status', name: 'status', type: 'radio', options: [{ value: 0, label: 'Inactive' }, { value: 1, label: 'Active' },], raw: true, formatter(e) {
+                        if (e) return `<span class="badge">active</span>`;
+                        return `<span class="badge badge-red">inactive</span>`;
+                    }
+                },
+                {
+                    title: 'Avatar', name: 'avatar', type: 'uploader', raw: true,
+                    formatter(v) { return v && `<img src="{{@BASE}}/${v}" class="h-12">` },
+                    attr: { accept: 'image/*' },
+                    validator(v) { return v[0]?.size < 1024 * 1024 * 1024 ? true : 'File size > 1MB' }
+                },
+                { title: 'Password', name: 'password1', type: 'password', visible: false, explanation(form) { return form.oper == 'edit' ? `{{t("login.leave_blank")}}` : '' } },
+                { title: 'Confirmation', name: 'password2', type: 'password', visible: false },
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/user/members',
+                editable: true,
+                size: 'full',
+                class: {
+                    mobile: 'whitespace-nowrap'
+                },
+                sorting: 'multiple',
+                multiSelect: false,
+                selection: 'single',
+                searchable: ['name', 'email', 'address', 'mobile'],
+                noDataMessage: '{{ t("table.no_data")}}',
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/user/member-edit',
+                object: 'Member',
+                size: 'large', // small, normal, large, huge 
+                columns: 2,
+                class: {
+                    name: 'col-start-1',
+                    address: 'md:col-span-2',
+                }
+            }
+        }
+        let data = FFTable(settings);
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

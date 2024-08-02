@@ -1,0 +1,61 @@
+<!-- radio {{@title ?? ''}} -->
+{~
+$loptions = preg_split("/\s*\|\s*/", @options ?? '');
+$label = [];
+$value = [];
+if(strpos($loptions[0], ",") > -1) {
+foreach($loptions as $opt) {
+[$l,$v] = preg_split("/,/", $opt);
+$label[] = $l;
+$value[] = $v;
+}
+} else {
+$label = $loptions;
+$value = $loptions;
+}
+
+if(!empty(@inline)) {
+$dclass = 'grid-cols-4 [&>:not(label)]:col-span-3';
+$lclass = 'text-right pr-2 py-2.5';
+$sclass = '!col-start-2';
+} else {
+$dclass = 'items-center';
+$lclass = '';
+$sclass = '';
+}
+$rclass = 'flex-start';
+switch(@cols ?? '') {
+case 1: $cclass = 'grid grid-cols-1'; break;
+case 2: $cclass = 'grid grid-cols-2'; break;
+case 3: $cclass = 'grid grid-cols-3'; break;
+case 4: $cclass = 'grid grid-cols-4'; break;
+default: $cclass = 'flex flex-wrap gap-x-4 gap-y-2'; $rclass = 'flex-nowrap';
+}
+$mark = !empty(@required) ? '<span class="text-theme-error">*</span>' : '';
+~}
+{~ if(empty(@options)): ~}
+<div class="text-red-600">&lt;ff:radio&gt; error: options is required</div>
+{~ else: ~}
+<div class="grid gap-1 items-start content-start {{ @dclass }} {{@class ?? ''}}" {{ @coattr ?? '' | raw }}>
+    <label :for="$id('input')" class="input-label {{ @lclass }}">{{@title ?? ''}} {{$mark}}</label>
+    <div class="flex p-2.5 bg-theme-inputBackground rounded-xl">
+        <div class="{{ $cclass }} w-full">
+            {~ foreach($value as $i => $v): ~}
+            <div x-id="['radio']" class="flex {{ $rclass }}">
+                <input :id="$id('radio')" type="radio" class="radio" value="{{ @v }}" {{ @attr ?? '' | raw }}>
+                <label x-bind:for="$id('radio')"
+                    class="ml-2 text-sm font-medium text-theme-inputText dark:text-theme-darkInputText">{{
+                    $label[@i]
+                    }}</label>
+            </div>
+            {~ endforeach; ~}
+        </div>
+    </div>
+    {~ if(!empty(@explanation) || !empty(@exattr)): ~}
+    <span class="text-xs {{ @sclass }}" {{ @exattr ?? '' | raw }}>{{@explanation ?? ''| raw}}</span>
+    {~ endif; ~}
+    {~ if(!empty(@errormodel)): ~}
+    <span class="text-xs text-theme-error dark:text-theme-darkError {{ @sclass }}" x-text="{{ @errormodel }}"></span>
+    {~ endif; ~}
+</div>
+{~ endif; ~}

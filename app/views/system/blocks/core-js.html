@@ -1,0 +1,13 @@
+<f3:inject id="script" mode="prepend">
+    <script src="{{@BASE}}/js/dayjs/dayjs.min.js"></script>
+    <script src="{{@BASE}}/js/dayjs/{{@APP.lang}}.js"></script>
+    <script defer src="{{@BASE}}/js/alpine.min.js"></script>
+    <script>
+        const LOCALE = '{{@APP.lang_loc}}';
+        const LANG = '{{@APP.lang}}';
+        dayjs.locale(LANG);
+    </script>
+    <check if="{{isset(@WEBSITE.footer_script)}}">
+        {{ \Preview::instance()->resolve(@WEBSITE.footer_script) | raw }}
+    </check>
+</f3:inject>

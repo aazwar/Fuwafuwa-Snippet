@@ -1,0 +1,33 @@
+<div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+  <div class="grid gap-8 lg:grid-cols-2 sm:max-w-sm sm:mx-auto lg:max-w-full">
+    <repeat group="{{@posts}}" value="{{@post}}">
+      <div class="flex">
+        <div class="pt-1 mr-6 text-center">
+          <div class="px-2 pb-1 mb-1 border-b border-gray-400">
+            <p class="text-sm text-blue-gray-700">{{date('M', strtotime(@post.pub_date))}}</p>
+          </div>
+          <div class="px-2">
+            <p class="text-lg font-bold">{{date('j', strtotime(@post.pub_date))}}</p>
+          </div>
+        </div>
+        <div>
+          <!-- <div class="mb-2">
+          <a href="#"
+            class="text-xs font-semibold tracking-wide uppercase transition-colors duration-200 hover:text-deep-purple-800 text-primary-500">
+            Delevopment
+          </a>
+        </div> -->
+          <div class="mb-2">
+            <a href="{{@BASE}}/post/{{@post.slug}}"
+              class="inline-block text-2xl font-bold leading-tight text-black transition-colors duration-200 hover:text-deep-purple-accent-400 line-clamp-2">
+              {{@post.title}}
+            </a>
+          </div>
+          <p class="mb-5 line-clamp-6">
+            {{@post.summary}}
+          </p>
+        </div>
+      </div>
+    </repeat>
+  </div>
+</div>

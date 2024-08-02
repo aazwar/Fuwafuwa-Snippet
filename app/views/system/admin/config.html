@@ -1,0 +1,171 @@
+<f3:inject id="content">
+    <div class="max-w-screen-md px-4 py-6" x-data="data">
+        <div class="my-2">
+            <h1 class="text-2xl font-bold text-gray-700">{{ t('config.config') }}</h1>
+        </div>
+        <ul class="tab-container">
+            <li class="tab" :class="{ 'tab-active': page == 0 }" @click="page = 0">{{ t('config.app') }}</li>
+            <li class="tab" :class="{ 'tab-active': page == 1 }" @click="page = 1">{{ t('config.company') }}</li>
+            <li class="tab" :class="{ 'tab-active': page == 2 }" @click="page = 2">{{ t('config.socmed') }}</li>
+            <li class="tab" :class="{ 'tab-active': page == 3 }" @click="page = 3">{{ t('config.mail') }}</li>
+            <li class="tab" :class="{ 'tab-active': page == 4 }" @click="page = 4">{{ t('config.website') }}</li>
+            <li class="tab" :class="{ 'tab-active': page == 5 }" @click="page = 5">{{ t('config.license') }}</li>
+        </ul>
+        <div id="myTabContent" class="p-6 bg-gray-50 dark:bg-gray-800 min-h-[50vh]">
+            <div x-show="page == 0" x-cloak>
+                <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    <ff:input title="{{t('config.app_title')}}" x-model="data.APP.title" autocomplete="off" required
+                        autofocus />
+                    <ff:textarea x-model="data.APP.description" title="{{t('config.app_desc')}}" rows="4" />
+                    <ff:input title="{{t('config.app_copyright')}}" x-model="data.APP.copyright" autocomplete="off" />
+                    <ff:input title="{{t('config.app_keywords')}}" x-model="data.APP.keywords" autocomplete="off" />
+                    <div>
+                        <label :for="$id('input')"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">{{t('config.app_reg')}}</label>
+                        <select :id="$id('input')" class="select" x-model="data.APP.registration">
+                            <option value="1">{{ t('config.app_reg_enabled') }}</option>
+                            <option value="0">{{ t('config.app_reg_disabled') }}</option>
+                        </select>
+                    </div>
+                    <ff:textarea title="{{t('config.app_member_type')}}" x-model="data.APP.member_type" rows="5" />
+                </div>
+            </div>
+            <div x-show="page == 1" x-cloak>
+                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    <ff:input title="{{t('config.company_name')}}" x-model="data.COMPANY.name" autocomplete="off" />
+                    <ff:input title="{{t('config.company_phone')}}" x-model="data.COMPANY.phone" autocomplete="off" />
+                    <ff:input title="{{t('config.company_address')}}" x-model="data.COMPANY.address"
+                        autocomplete="off" />
+                    <ff:input title="{{t('config.company_email')}}" x-model="data.COMPANY.email" autocomplete="off" />
+                </div>
+            </div>
+            <div x-show="page == 2" x-cloak>
+                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    <ff:input title="{{t('config.socmed_fb')}}" x-model="data.SOCIAL.fb" autocomplete="off" />
+                    <ff:input title="{{t('config.socmed_ig')}}" x-model="data.SOCIAL.ig" autocomplete="off" />
+                    <ff:input title="{{t('config.socmed_tw')}}" x-model="data.SOCIAL.tw" autocomplete="off" />
+                    <ff:input title="{{t('config.socmed_li')}}" x-model="data.SOCIAL.li" autocomplete="off" />
+                </div>
+            </div>
+            <div x-show="page == 3" x-cloak>
+                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    <ff:input title="{{t('config.mail_host')}}" x-model="data.MAIL.host" autocomplete="off" />
+                    <ff:input title="{{t('config.mail_port')}}" x-model="data.MAIL.port" autocomplete="off" />
+                    <ff:input title="{{t('config.mail_scheme')}}" x-model="data.MAIL.scheme" autocomplete="off" />
+                    <ff:input title="{{t('config.mail_user')}}" x-model="data.MAIL.user" autocomplete="off" />
+                    <ff:input title="{{t('config.mail_pass')}}" x-model="data.MAIL.pass" autocomplete="off" />
+                    <ff:input title="{{t('config.mail_from')}}" x-model="data.MAIL.from" autocomplete="off" />
+                </div>
+                <div class="flex items-center gap-2 mt-4">
+                    <button class="button" @click.prevent='test_email()' :disabled="submitting">Test</button>
+                    <ff:spinner x-show="submitting" x-cloak />
+                </div>
+            </div>
+            <div x-show="page == 4" x-cloak>
+                <h3 class="py-1 text-sm font-bold">{{t('config.meta_verification')}}</h3>
+                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    <ff:input title="{{t('config.google_meta')}}" x-model="data.WEBSITE.google_meta"
+                        autocomplete="off" />
+                    <ff:input title="{{t('config.facebook_meta')}}" x-model="data.WEBSITE.facebook_meta"
+                        autocomplete="off" />
+                    <ff:input title="{{t('config.bing_meta')}}" x-model="data.WEBSITE.bing_meta" autocomplete="off" />
+                    <ff:input title="{{t('config.yandex_meta')}}" x-model="data.WEBSITE.yandex_meta"
+                        autocomplete="off" />
+                </div>
+                <h3 class="py-1 mt-2 text-sm font-bold">{{t('config.script')}}</h3>
+                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    <ff:textarea x-model="data.WEBSITE.header_script" rows="4" title="{{t('config.header_script')}}" />
+                    <ff:textarea x-model="data.WEBSITE.footer_script" rows="4" title="{{t('config.footer_script')}}" />
+                    <ff:textarea x-model="data.WEBSITE.top_ad_script" rows="4" title="{{t('config.top_ad_script')}}" />
+                    <ff:textarea x-model="data.WEBSITE.bottom_ad_script" rows="4"
+                        title="{{t('config.bottom_ad_script')}}" />
+                </div>
+                <h3 class="py-1 mt-2 text-sm font-bold">{{t('config.page')}}</h3>
+                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    {~
+                    $opt_json = json_decode((new \Util\Html)->selectOption('\Fuwafuwa\Model\Page', '', 'slug', 'title'),
+                    true);
+                    $page_option = join("\n", array_map(fn($e) => "<option value=\"$e[value]\">$e[label]</option>",
+                    $opt_json)); ~}
+                    <div>
+                        <label :for="$id('input')"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">{{t('config.guest_page')}}</label>
+                        <select :id="$id('input')" class="select" x-model="data.WEBSITE.guest_page">
+                            <option value="">-</option>
+                            {{ @page_option }}
+                        </select>
+                    </div>
+                    <div>
+                        <label :for="$id('input')"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">{{t('config.member_page')}}</label>
+                        <select :id="$id('input')" class="select" x-model="data.WEBSITE.member_page">
+                            <option value="">-</option>
+                            {{ @page_option }}
+                        </select>
+                    </div>
+                    <div>
+                        <label :for="$id('input')"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">{{t('config.about_page')}}</label>
+                        <select :id="$id('input')" class="select" x-model="data.WEBSITE.about_page">
+                            <option value="">-</option>
+                            {{ @page_option }}
+                        </select>
+                    </div>
+                    <div>
+                        <label :for="$id('input')"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">{{t('config.contact_page')}}</label>
+                        <select :id="$id('input')" class="select" x-model="data.WEBSITE.contact_page">
+                            <option value="">-</option>
+                            {{ @page_option }}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div x-show="page == 5" x-cloak>
+                <div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                    <ff:input title="{{t('config.license_domain')}}" x-model="data.LICENSE.domain" autocomplete="off" />
+                    <ff:input title="{{t('config.license_key')}}" x-model="data.LICENSE.key" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="flex mt-6">
+                <button class="button" @click='kirim()'>{{ t('common.save') }}</button>
+            </div>
+        </div>
+    </div>
+
+</f3:inject>
+<include href="blocks/popup.html" />
+<f3:inject id="script" mode="append">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        let data = {
+            page: 0,
+            submitting: false,
+            data: {
+                APP: {},
+                COMPANY: {},
+                SOCIAL: {},
+                MAIL: {},
+                WEBSITE: {},
+                LICENSE: {},
+            },
+            init() {
+                fetchData("{{@BASE}}/ajax/admin/load-config").then(data => this.data = data);
+            },
+            kirim() {
+                fetchData("{{@BASE}}/ajax/admin/save-config", { ...this.data });
+                popupInfo('{{ t("config.config_saved") }}')
+            },
+            test_email() {
+                this.submitting = true;
+                fetchData("{{@BASE}}/ajax/admin/test-email", this.data.MAIL)
+                    .then(
+                        resp => popupInfo('Test email succeeded', '', () => this.submitting = false),
+                        error => popupError(error, '', () => this.submitting = false)
+                    )
+            }
+        };
+    </script>
+</f3:inject>

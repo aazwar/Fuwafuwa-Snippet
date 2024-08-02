@@ -1,0 +1,76 @@
+<f3:inject id="script" mode="append">
+    <script src="{{@BASE}}/js/tinymce/tinymce.min.js"></script>
+    <script src="{{@BASE}}/images/templates/templates.js"></script>
+    <script>
+        function initTinymce(selector, toolbar = null, plugins = null) {
+            if (!toolbar)
+                toolbar = 'undo redo | imageBrowser template blocks | bold italic | ' +
+                    'alignleft aligncenter alignright alignjustify | ' +
+                    'bullist numlist checklist outdent indent | removeformat pretty_code table';
+            if (!plugins)
+                plugins = ['searchreplace', 'pretty_code',
+                    'advlist', 'autolink',
+                    'lists', 'link', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
+                    'fullscreen', 'media', 'table', 'wordcount', 'template'
+                ];
+            tinymce.init({
+                selector,
+                plugins,
+                toolbar,
+                branding: false,
+                templates,
+                content_css: ['{{@BASE}}/css/styles.opt.min.css', '{{@BASE}}/css/tinymce.css'],
+                content_style: 'body { padding: 1rem }',
+                body_class: '{{ @body_class ?? "format max-w-none bg-white dark:bg-black text-theme-text1 dark:text-theme-darkText1"}}',
+                valid_elements: '*[*]',
+                invalid_elements: 'script',
+                height: 500,
+
+                // images
+                image_dimensions: false,
+                image_uploadtab: true,
+                document_base_url: '{{@BASE}}/',
+                relative_urls: false,
+                remove_script_host: true,
+                convert_urls: true,
+
+                //table
+                table_default_styles: {},
+                table_sizing_mode: 'responsive',
+                table_class_list: [
+                    { title: 'Default', value: 'table p-4 bg-white shadow rounded-lg' }
+                ],
+                skin: (window.matchMedia("(prefers-color-scheme: dark)").matches ? "oxide-dark" : "oxide"),
+                setup: (editor) => {
+                    editor.ui.registry.addButton('imageBrowser', {
+                        tooltip: 'Insert Image',
+                        icon: 'image',
+                        onAction: (_) => {
+                            showImageBrowser((img) => {
+                                let image = Object.assign({}, img);
+                                if (!image.url.match(/^http/)) {
+                                    image.url = '{{@BASE}}/' + image.url;
+                                }
+                                const block = `<figure class="w-full">
+  <img class="h-auto max-w-full rounded-lg" src="${image.url}" alt="${image.title}" ${image.id && 'data-image-id="' + image.id + '"'}>
+  <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">${image.description}</figcaption>
+</figure><p></p>.`;
+                                let node = editor.selection.getNode();
+                                if (node.tagName.match(/img|figcaption/i)) {
+                                    editor.selection.select(node.parentNode);
+                                    editor.selection.setContent(block);
+                                } else if (node.tagName.toLowerCase() === 'figure') {
+                                    editor.selection.select(node);
+                                    editor.selection.setContent(block);
+                                } else {
+                                    editor.execCommand('InsertHTML', false, block);
+                                }
+                            })
+                        }
+                    });
+                },
+            });
+
+        }
+    </script>
+</f3:inject>

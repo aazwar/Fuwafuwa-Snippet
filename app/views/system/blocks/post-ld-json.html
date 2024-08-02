@@ -1,0 +1,29 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{@ROOT_URL}}/post"
+  },
+  "headline": "{{@post.title}}",
+  "image": [
+    "{{@post.thumb ?? ''}}"
+   ],
+  "datePublished": "{{ date(DATE_ATOM, strtotime(@post.published)) }}",
+  "dateModified": "{{ date(DATE_ATOM, strtotime(@post.updated)) }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{@COMPANY.name}}"
+  },
+   "publisher": {
+    "@type": "Organization",
+    "name": "{{@COMPANY.name}}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{@ROOT_URL}}{{@COMPANY.logo_image}}"
+    }
+  },
+  "description": {{json_encode(trim(@post.summary))}}
+}
+</script>

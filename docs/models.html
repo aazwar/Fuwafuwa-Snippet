@@ -1,0 +1,291 @@
+<html>
+<header>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="default.min.css">
+    <link rel="stylesheet" href="tailwind.min.css">
+</header>
+
+<body class="container w-full mx-auto dark:bg-gray-900">
+    <script src=" toc.js">
+    </script>
+    <article class="format dark:format-invert w-[90vw] max-w-screen-md lg:w-full relative bg-white dark:bg-gray-900">
+        <section id="models">
+            <h1>Models</h1>
+            <div>
+                <p><span class="ff">Fuwafuwa Framework</span> provides a robust Model layer to simplify database
+                    interactions. Models offer a
+                    convenient interface for common database operations, such as retrieving, updating, deleting, and
+                    creating records.</p>
+
+                <h2>Model Structure</h2>
+                <p>Models are typically located in the <code>app/controllers/user/model</code> directory. A basic model
+                    structure
+                    might look like this:</p>
+            </div>
+            <div id="creating_model">
+                <pre class="not-format">
+<code class="language-php">&lt;?php
+
+namespace Model;
+    
+class User extends \Fuwafuwa\BaseModel {
+
+    function __construct(\Fuwafuwa\Db $db) {
+    parent::__construct($db, 'user', ['ai_field' => 'login', 'created_field' => 'created', 'modified_field' => 'updated', 'deleted_field' => 'deleted', ]);
+    
+    // https://github.com/rakit/validation
+    // $this->validation = [ 
+    //   'rules' => [
+    //   ],
+    //   'custom_message' => [
+    //   ]
+    // ];    
+    
+    // $this->preProcess = function(array $data): array {
+    //   // do something to data before insert/update
+    //   return $data;
+    // };    
+
+    // $this->preCreate = function(array $self, array $pkeys): void { };    
+    // $this->preUpdate = function(array $self, array $pkeys): void { };    
+    // $this->preDelete = function(array $self, array $pkeys): void { };    
+    // $this->postCreate = function(array $self, array $pkeys): void { };    
+    // $this->postUpdate = function(array $self, array $pkeys): void { };    
+    // $this->postDelete = function(array $self, array $pkeys): void { };    
+    
+    // $this->postView = function(array $data): array {
+    //   // do something to SQL, usually for increase view count
+    //   return $data;
+    // };    
+    }
+    
+}</code></pre>
+                <p><span class="ff">Fuwafuwa Framework</span> simplifies model creation through a code generator. By
+                    running the following
+                    command from the root directory:</p>
+                <pre
+                    class="not-format"><code class="language-bash">php index.php fuwafuwa/generator/model --table=user > app/views/user/model/user.php</code></pre>
+            </div>
+            <div id="model_configuration">
+                <h2>Model Configuration</h2>
+                <p>The provided code snippet showcases the User model class and its configuration options passed to the
+                    parent constructor (<code>\Fuwafuwa\BaseModel</code>):
+                <ul>
+                    <li><code>$db</code> An instance of the database connection.</li>
+                    <li><code>$table</code> The name of the database table the model represents (user in this case).
+                    </li>
+                    <li><code>$options</code> An associative array containing additional configuration options
+                        <ul>
+                            <li><code>ai_field</code> <i>(Optional)</i> Specifies the auto-increment field name (if
+                                applicable). Setting this eliminates the need for the keys option.
+                            </li>
+                            <li><code>created_field</code> <i>(Optional)</i> When set, the framework automatically
+                                populates this field with the current timestamp during record insertion.</li>
+                            <li><code>modified_field</code> <i>(Optional)</i> If defined, the framework updates this
+                                field with the current timestamp whenever a record is modified.</li>
+                            <li><code>deleted_field</code> <i>(Optional)</i> With this option enabled, the framework
+                                won't permanently delete records. Instead, it sets the deleted_field value to the
+                                current timestamp upon deletion.</li>
+                            <li><code>keys</code> <i>(Optional)</i> An array defining table key(s) if the table doesn't
+                                have an
+                                auto-increment field or uses compound keys.</li>
+                        </ul>
+                    <li><code>$fields</code> <i>(Optional)</i> comma separated, fields that will be used for operation.
+                        For
+                        example, you don't want to include <code>password</code> in <code>user</code> model</i>, so
+                        that the password will not accidentally changed with request data.</li>
+                </ul>
+                <h3>Additional Considerations</h3>
+
+                <p>The code also demonstrates commented-out sections for:</p>
+
+                <ul>
+                    <li><b>Validation rules:</b> Utilizing a library like Rakit/Validation, you can define validation
+                        rules to ensure data integrity.</li>
+                    <li><b>Data pre-processing:</b> The preProcess method allows you to manipulate data before insertion
+                        or update.</li>
+                    <li>
+                        <b>Custom hooks:</b> Pre and post hooks can be implemented for various events like creation,
+                        update, deletion, and viewing to perform custom actions.
+                        By understanding these configuration options and hooks, developers can tailor models to meet
+                        specific application requirements.
+                    </li>
+                </ul>
+                </p>
+                <h3> Rejecting & Accepting Request Values</h3>
+
+                <p>For security reasons, <span class="ff">Fuwafuwa Framework</span> allows you to control which request
+                    values are accepted or
+                    rejected by the model. You can achieve this during model construction using one of the following
+                    approaches:</p>
+
+                <pre>
+$this->except_fields = "token"; // Reject the "token" value from the request.
+$this->only_fields = "login,password"; // Only accept "login" and "password" values from the request.
+</pre>
+
+                <h3> Validation</h3>
+
+                <p><span class="ff">Fuwafuwa Framework</span> models leverage Rakit Validation library
+                    (https://github.com/rakit/validation) to
+                    provide built-in validation features. Here's an example:</p>
+
+                <pre class="not-format">
+<code>
+$this->validation = [
+    'rules' => [
+        'login' => 'required|alpha_num|unique:login',
+        'fullname' => 'required',
+        'password1' => fn (string $action, array $data): string => preg_match(static::REG_ADD, $action) ? 'required|min:6' : 'nullable|min:6',
+        'password2' => 'present|same:password1',
+        'role' => 'required',
+    ]
+];
+</code>
+</pre>
+
+                <p>You might be wondering why the User table doesn't have <code>password1</code> and
+                    <code>password2</code> fields. These fields
+                    are temporary and serve the purpose of validating the password during user input. Later, in the
+                    <code>preProcess</code> method, the actual password value is hashed and stored securely.
+                    Additionally, the rule
+                    for <code>password1</code> utilizes a function to determine if the operation is an insertion (where
+                    the password
+                    is required) or an update (where the password is optional). This allows you to display a message
+                    like "Leave blank if not changing" near the password input field.
+                </p>
+
+                <h3> PreProcess</h3>
+
+                <p>The preProcess method is a callback function that executes every time the model receives data, right
+                    before performing an insert or update operation.</p>
+
+                <pre class="not-format">
+<code>
+$this->preProcess = function (array $data): array {
+    if ($data['password1']) {
+        $data['password'] = password_hash($data['password1'], PASSWORD_BCRYPT);
+    }
+    $data['fullname'] = trim($data['fullname']);
+    return $data;
+};
+</code>
+</pre>
+
+                <p>In the provided example, the preProcess function checks if the password1 field has a value. If so, it
+                    hashes the password using password_hash and stores it in the password field. Additionally, it trims
+                    any leading or trailing whitespace characters from the fullname field before saving.</p>
+
+                <h3> Pre and Post Events</h3>
+
+                <p><span class="ff">Fuwafuwa Framework</span> provides seven events (pre and post) for each CRUD
+                    (Create, Read, Update, Delete)
+                    operation on a table. There's also a special "view" event typically used to increment post view
+                    counts. Here's an example of setting a token for a newly created user using the preCreate event:</p>
+
+                <pre class="not-format">
+<code>
+$this->preCreate = function(array $self, array $pkeys): void {
+    $self['token'] = md5((string) time());
+};
+</code>
+</pre>
+            </div>
+            <div id="working_with_data">
+                <h2> Working with Data</h2>
+
+                <p>Once you've defined your model with its configuration, you can start using it within your controllers
+                    to interact with the database.</p>
+
+                <pre>
+$user = m('\User\Model');
+</pre>
+
+                <p>Here, <code>m()</code> is a utility function that leverages Dependency Injection (DI) to retrieve an
+                    instance of
+                    the <code>\Fuwafuwa\BaseModel</code> class for the specified model. As you can see, we don't need to
+                    explicitly
+                    provide a database instance. This is because the model's constructor accepts the database connection
+                    information during initialization, and the DI container automatically resolves the required
+                    dependencies.</p>
+
+                <p><span class="ff">Fuwafuwa Framework</span> utilizes the Dice library
+                    (https://github.com/Level-2/Dice) to manage dependencies
+                    within the application.</p>
+
+                <pre class="not-format">
+<code>
+$user->retrieve(['user']);
+if($user->dry()) {
+    // no record
+    $user->copyfrom('GET');
+    $user->created = gmdate('Y-m-d');
+} else {
+    // has record
+    $user->copyfrom('GET');
+    $user->updated = gmdate('Y-m-d');
+}
+$user->save();
+</code>
+</pre>
+
+                <p>In the provided code example, we perform an insert or update operation on the user table using the
+                    key 'user'. Here's a breakdown of the steps:</p>
+
+                <ol>
+                    <li>
+                        <code>$user->retrieve(['user'])</code>: This line attempts to retrieve a record from the user
+                        table using the key
+                        'user'.
+                    </li>
+                    <li>
+                        <code>if($user->dry())</code>: The <code>dry()</code> method checks if the retrieval resulted in
+                        an empty recordset.
+                        <ol>
+                            <li>
+                                <code>// no record</code>: If no record is found, the code assumes it's a new record
+                                insertion scenario.
+                                <ul>
+                                    <li><code>$user->copyfrom('GET')</code>: This copies data from the GET request
+                                        parameters to the model's properties.</li>
+                                    <li><code>$user->created = gmdate('Y-m-d')</code>: Sets the created field to the
+                                        current date in GMT format.</li>
+                                </ul>
+                            </li>
+                        </ol>
+                        <ol>
+                            <code>// has record</code>: If a record is found, the code assumes it's an update scenario.
+                            <ul>
+                                <li><code>$user->copyfrom('GET')</code>: Similar to the insertion case, this copies data
+                                    from the GET request.</li>
+                                <li><code>$user->updated = gmdate('Y-m-d')</code>: Sets the updated field to the current
+                                    date in GMT format.</li>
+                            </ul>
+                        </ol>
+                    </li>
+                    <li>
+                        <code>$user->save()</code>: Finally, the save() method is called to persist the data (either
+                        insert or update) to the
+                        database.
+                    </li>
+                </ol>
+            </div>
+        </section>
+    </article>
+    <nav class="flex py-4">
+        <a href="mvc.html">
+            <button type="button"
+                class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Prev</button>
+        </a>
+        <a href="controllers.html">
+            <button type="button"
+                class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Next</button>
+        </a>
+
+    </nav>
+    <script src="highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+
+</html>

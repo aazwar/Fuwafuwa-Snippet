@@ -1,0 +1,19 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "{{@ld_title}}",
+  "description": "{{ @ld_deskripsi }}",
+  "thumbnailUrl": [
+    "https://img.youtube.com/vi/{{@ld_ytid}}/hqdefault.jpg"
+   ],
+  "uploadDate": "{{ date(DATE_ATOM, strtotime(@ld_tanggal)) }}",
+  "contentUrl": "https://www.youtube.com/watch?v={{@ld_ytid}}",
+  "embedUrl": "https://www.youtube.com/embed/{{@ld_ytid}}",
+  "interactionStatistic": {
+    "@type": "InteractionCounter",
+    "interactionType": { "@type": "http://schema.org/WatchAction" },
+    "userInteractionCount": {{ @ld_count }}
+  }
+}
+</script>

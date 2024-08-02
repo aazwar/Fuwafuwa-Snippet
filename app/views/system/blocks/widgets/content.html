@@ -1,0 +1,32 @@
+<!-- content {{@title ?? ''}} -->
+{~ if(!empty(@floating)): ~}
+{~ @type ??= "text"; ~}
+<div class="relative" x-id="['input']" {{ @coattr ?? '' | raw }}>
+    <label :for="$id('input')" class="input-label absolute -top-2 px-1 !text-xs">{{@title ??
+        ''}}</label>
+    <div class="content" {{ @attr ?? '' | raw }}>{{@content ?? ''}}</div>
+    {~ if(!empty(@explanation)): ~}
+    <span class="text-xs {{ @sclass }}">{{@explanation | raw}}</span>
+    {~ endif; ~}
+</div>
+{~ else: ~}
+{~
+if(!empty(@inline)) {
+$dclass = 'grid-cols-4 [&>:not(label)]:col-span-3';
+$lclass = 'text-right pr-2 p-1.5';
+$sclass = '!col-start-2';
+} else {
+$dclass = '';
+$lclass = '';
+$sclass = '';
+}
+~}
+<div class="grid gap-1 content-start items-start {{ @dclass }} {{@class ?? ''}}" x-id="['input']" {{ @coattr ?? '' | raw
+    }}>
+    <label class="input-label {{ @lclass }}">{{@title ?? ''}}</label>
+    <div class="content" {{ @attr ?? '' | raw }}>{{@content ?? ''}}</div>
+    {~ if(!empty(@explanation) || !empty(@exattr)): ~}
+    <span class="text-xs {{ @sclass }}" {{ @exattr ?? '' | raw }}>{{@explanation ?? ''| raw}}</span>
+    {~ endif; ~}
+</div>
+{~ endif; ~}

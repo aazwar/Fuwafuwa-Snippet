@@ -1,0 +1,26 @@
+<?php
+
+return [
+  'account_active' => 'Account active',
+  'activation' => 'Activation',
+  'activation_failed' => 'Activation failed!',
+  'activation_email_sent' => 'Activation email has been sent to {0}',
+  'activation_success' => 'Activation succeed! You can login now',
+  'address' => 'Address',
+  'email' => 'Email',
+  'email_registered' => 'Email {0} has been registered!',
+  'email_reset_sent' => 'Link for reset password has been sent to {0}',
+  'email_unregistered' => 'Email {0} has not been registered!',
+  'failed' => 'Registration Failed!',
+  'mobile' => 'Mobile Phone',
+  'name' => 'Name',
+  'password1' => 'Password',
+  'password2' => 'Password Confirmation',
+  'password_change' => 'Change Password',
+  'register' => 'Register',
+  'registration' => 'Member Registration',
+  'sign_in' => 'Sign In',
+  'success' => 'Registration Success!',
+  'sudah_member' => 'Already a member?',
+  'user_activated' => 'User has been activated',
+];

@@ -1,0 +1,83 @@
+<!-- Generated: 2022-08-10 16:00 -->
+<f3:inject id="content">
+    <h2 class="text-lg font-bold">Customer</h2>
+    <div x-data="data">
+        <include href="blocks/table.html" />
+        <include href="blocks/modal-form.html" />
+    </div>
+    <svg class="hidden">
+        <defs>
+            <symbol id="people">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </symbol>
+        </defs>
+    </svg>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        const number = new Intl.NumberFormat('{{ @APP.lang_loc }}', {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        });
+
+        let settings = {
+            fields: [
+                {
+                    title: 'Customer Id', name: 'CustomerId', hidden: true, readonly: true
+                },
+                {
+                    title: 'Support Rep', name: 'SupportRepId', visible: false, type: 'select', triggerChange(d) {
+                        fetchData('{{@BASE}}/ajax/chinook/employee/select-option',).then(data => {
+                            this.options = data;
+                        });
+                    },
+                },
+                {
+                    title: 'Last Name', name: 'LastName', formatter(v, c, d) {
+                        return `<svg viewBox="0 0 24 24" class="inline mr-2 stroke-1 size-4 stroke-gray-500 dark:stroke-gray-400 fill-transparent">
+      <use href="#people" />
+    </svg> <a class="underline" href="{{@BASE}}/chinook/customer/${d.CustomerId}">${v}</a>`;
+                    }, raw: true, class: 'whitespace-nowrap', searchable: true
+                },
+                { title: 'First Name', name: 'FirstName', searchable: true },
+                { title: 'Company', name: 'Company', class: 'whitespace-nowrap' },
+                { title: 'Address', name: 'Address', visible: false, type: 'textarea', fclass: 'md:col-span-2' },
+                { title: 'City', name: 'City', class: 'whitespace-nowrap' },
+                { title: 'State', name: 'State', visible: false, },
+                { title: 'Country', name: 'Country', visible: false, },
+                { title: 'PostalCode', name: 'PostalCode', visible: false, },
+                { title: 'Phone', name: 'Phone', visible: false, type: 'tel' },
+                { title: 'Fax', name: 'Fax', visible: false, type: 'tel' },
+                { title: 'Email', name: 'Email', visible: false, type: 'email' },
+
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/chinook/customer/list',
+                editable: true,
+                selection: 'single',
+                pageSize: 20,
+                sorting: 'multiple',
+                size: 'large',
+                // display: 'compact',
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/chinook/customer/edit',
+                object: 'Customer',
+                size: 'normal', // small, normal, large, huge 
+                columns: 2,
+                size: 'large',
+                fullHeight: true,
+                pk: ['CustomerId'], // primary key
+            }
+        }
+        let data = FFTable(settings);
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

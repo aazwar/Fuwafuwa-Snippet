@@ -1,0 +1,48 @@
+<!-- Generated: 2022-11-20 16:20 -->
+<div class="grid gap-3 md:grid-cols-2">
+    <ff:input x-model="data.login" :disabled="form.oper == 'edit'" />
+    <ff:input x-model="data.fullname" />
+
+    <!-- Role -->
+    <div class=" " x-id="['input']">
+        <label :for="$id('input')" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Role</label>
+        <div>
+            <div class="flex">
+                <div class="flex items-center gap-4">
+                    <div x-id="['radio']">
+                        <input :checked="data['role'] == 'user'" :id="$id('radio')" type="radio" value="user"
+                            name="role" x-model="data['role']"
+                            class="size-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label :for="$id('radio')"
+                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">User</label>
+                    </div>
+                    <div x-id="['radio']">
+                        <input :checked="data['role'] == 'admin'" :id="$id('radio')" type="radio" value="admin"
+                            name="role" x-model="data['role']"
+                            class="size-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label :for="$id('radio')"
+                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Admin</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span class="mt-2 text-xs text-theme-error dark:text-theme-darkError" x-text="errors['role']"></span>
+    </div>
+    <!-- Active -->
+    <div class=" " x-id="['input']">
+        <label :for="$id('input')"
+            class="block text-sm font-medium text-theme-text1 dark:text-theme-darkText1 mb-2">Active</label>
+        <div>
+            <input :id="$id('input')" type="checkbox" :checked="Boolean(data['active'])" name="active" value="1"
+                x-model="data['active']"
+                class="size-4 text-theme-text1 bg-theme-background1 rounded border-theme-border1 focus:ring-theme-focus focus:ring-2 dark:bg-theme-darkBackground1 dark:border-theme-border3 ">
+        </div>
+        <span class="mt-2 text-xs text-red-600 dark:text-red-400" x-text="errors['active']"></span>
+    </div>
+
+    <ff:textarea x-model="data.token" />
+    <ff:textarea x-model="data.push_token" title="Push Token" />
+
+    <ff:input type="password" x-model="data.password1" title="Password" />
+    <ff:input type="password" x-model="data.password2" title="Confirmation" />
+</div>

@@ -1,0 +1,36 @@
+<f3:inject id="content">
+    <!-- Parent Component -->
+    <div x-data="parent">
+        <div id="child1" x-data="{ childData: 'Hello from child 1' }">
+            <!-- Child 1 Content -->
+        </div>
+
+        <div id="child2" x-data="{ childData: 'Hello from child 2' }">
+            <!-- Child 2 Content -->
+        </div>
+
+        <!-- Accessing Child Data from Parent -->
+        <button class="button button-gray" @click="accessChildData()">Access Child Data</button>
+    </div>
+</f3:inject>
+<f3:inject id="script" mode="append">
+    <!-- Parent Component JavaScript -->
+    <script>
+        let parent = {
+            children: {},
+            init() {
+                this.$nextTick(() => {
+                    Array.from(this.$el.querySelectorAll("[x-data]")).forEach(e => this.children[e.id] = Alpine.$data(e));
+                });
+            },
+            parentData: 'Hello from parent',
+            accessChildData() {
+                const child1Data = this.children.child1.childData;
+                const child2Data = this.children.child2.childData;
+
+                console.log("Child 1 Data:", child1Data);
+                console.log("Child 2 Data:", child2Data);
+            }
+        }
+    </script>
+</f3:inject>

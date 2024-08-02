@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+
+<head>
+  <!-- meta -->
+  <f3:fragment id="meta" tag="FALSE" />
+  <!-- css -->
+  <f3:fragment id="style" tag="FALSE" />
+</head>
+
+<body>
+
+  <f3:fragment id="content" tag="FALSE" />
+  <check if="{{ isset(@content_html) }}">{{@content_html | raw }}</check>
+  <!-- BODY END -->
+  <f3:fragment id="script" tag="FALSE" />
+  <include href="{{@content}}" if="{{@content}}" />
+  <include href="blocks/core-js.html" />
+  <include href="blocks/core-css.html" />
+  <include href="blocks/core-meta.html" />
+</body>

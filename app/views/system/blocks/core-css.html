@@ -1,0 +1,38 @@
+<f3:inject id="style" mode="prepend">
+    <link rel="apple-touch-icon" href="{{@BASE}}/apple-touch-icon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="{{@BASE}}/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="{{@BASE}}/css/styles.opt.min.css">
+    <style>
+        [x-cloak] {
+            display: none;
+        }
+
+        /* Tailwind select arrow */
+        [dir="rtl"] select {
+            background-position: left 0.5rem center;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .printable,
+            .printable * {
+                visibility: visible;
+            }
+
+            .printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+
+        @page {
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+            }
+        }
+    </style>
+</f3:inject>

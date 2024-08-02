@@ -1,0 +1,15 @@
+<f3:inject id="content">
+  <div class="w-full lg:max-w-screen-lg mx-auto mt-8">
+    <h2 class="text-9xl text-center">{{@ERROR.code}}</h2>
+    <span class="font-bold text-xl">{{@ERROR.status}}</span>
+    <div class="w-full overflow-x-auto">
+      <pre class="text-2xl my-8">{{@ERROR.text}}</pre>
+      <check if="{{@ERROR.code == 500 && @DEBUG}}">
+        <code class="whitespace-pre-wrap text-xs">{{@ERROR.trace|raw}}</code>
+      </check>
+    </div>
+    <check if="{{@ERROR.code == 401}}">
+      <include href="login.html" />
+    </check>
+  </div>
+</f3:inject>

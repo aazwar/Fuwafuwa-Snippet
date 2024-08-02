@@ -1,0 +1,117 @@
+<f3:inject id="content">
+    <h2 class="font-bold text-lg">Generator</h2>
+    <div class="grid grid-cols-2 gap-4 my-6" x-data="data">
+        <div id="generated_form" class="col-span-2 border rounded-lg p-4 mb-2">
+            <include href="blocks/form.html" />
+        </div>
+        <div class="p-2">
+            <template x-for="(field, i) in fields">
+                <div class="w-full flex gap-2 items-center mb-2">
+                    <div>
+                        <svg aria-hidden="true" @click="fields.splice(i, 1)"
+                            class="h-6 w-6 rounded-full border stroke-gray-500 dark:stroke-gray-400 fill-transparent stroke-1"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <input
+                            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 disabled:opacity-30"
+                            x-model="field.name" @blur="field.title = upp(field.name)">
+                    </div>
+                    <div>
+                        <select x-model="field.type"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="text">Text</option>
+                            <option value="email">Email</option>
+                            <option value="date">Date</option>
+                            <option value="checkbox">Checkbox</option>
+                            <option value="radio">Radio</option>
+                            <option value="select">Select</option>
+                            <option value="textarea">Text Area</option>
+                        </select>
+                    </div>
+                </div>
+            </template>
+            <svg aria-hidden="true"
+                @click="fields.push({ title: 'Title', name: 'name', options: [{ value: 'value1', label: 'Label1'}, { value: 'value2', label: 'Label2' }] })"
+                class="h-6 w-6 rounded-full border stroke-gray-500 dark:stroke-gray-400 fill-transparent stroke-1"
+                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <div>Id</div>
+            <div class="col-span-2"><input
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 disabled:opacity-30"
+                    x-model="form.id"></div>
+            <div>Object Name</div>
+            <div class="col-span-2"><input
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 disabled:opacity-30"
+                    x-model="form.object"></div>
+            <div>class</div>
+            <div class="col-span-2"><input
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 disabled:opacity-30"
+                    x-model="form.class"></div>
+            <div>Size</div>
+            <div class="flex col-span-2">
+                <select
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    x-model="form.size">
+                    <option value="small">Small</option>
+                    <option value="normal">Normal</option>
+                    <option value="large">Large</option>
+                    <option value="huge">Huge</option>
+                </select>
+            </div>
+            <div>Columns</div>
+            <div class="col-span-2">
+                <select
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    x-model="form.columns">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+            </div>
+            <div>Inline</div>
+            <div class="col-span-2"><input type="checkbox" x-model="form.inline"
+                    class="size-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            </div>
+            <div>Tinymce</div>
+            <div class="col-span-2"><input type="checkbox" x-model="tinymce"
+                    class="size-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            </div>
+        </div>
+        <div class="col-span-2">
+            <textarea :value="json" @click="$el.select()"
+                class="w-full h-fit block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+        </div>
+    </div>
+</f3:inject>
+<f3:inject id="script">
+    <script>
+        const upp = str => str.charAt(0).toUpperCase() + str.slice(1);
+        let data = {
+            form: {
+                id: 'form_' + (Math.random() + 1).toString(36).substring(7),
+                object: 'object',
+                class: 'mx-w-md',
+                size: 'normal',
+                columns: 1,
+                inline: false,
+            },
+            tinymce: false,
+            fields: [],
+            get json() {
+                let json = JSON.parse(JSON.stringify(this.fields));
+                json = json.map(e => { e.type?.match(/select|radio/) || delete (e.options); return e })
+                let str = { form: this.form, fields: json, tinymce: this.tinymce };
+                return "'" + JSON.stringify(str) + "'";
+            },
+            data: {},
+            errors: { name: 'error test' },
+        }
+    </script>
+</f3:inject>

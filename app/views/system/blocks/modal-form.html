@@ -1,0 +1,43 @@
+<!-- Modal Form -->
+<template x-teleport="body">
+    <dialog id="FormModal" x-bind:id="form.modalId" tabindex="-1" class="w-full bg-transparent md:max-h-screen" :class="{
+        'max-w-md': form.size == 'small',
+        'max-w-4xl': form.size == 'large',
+        'max-w-7xl': form.size == 'huge',
+        'max-w-lg': form.size == 'normal' || !form.size,
+        'h-full': form.fullHeight,
+       }">
+        <!-- Modal content -->
+        <div class="flex flex-col max-h-screen shadow bg-theme-background1 rounded-xl dark:bg-theme-darkBackground1"
+            :id="form.id">
+            <!-- Modal header -->
+            <div
+                class="flex items-start justify-between px-4 py-2 border-b rounded-t-xl bg-theme-tableHeader dark:bg-theme-darkTableHeader backdrop-blur backdrop-filter text-theme-text1 dark:text-theme-darkText1">
+                <h3 class="flex-1 text-xl font-semibold" x-text="form.title || `${ form.object } – ${ form.oper }`"
+                    id="modal-header">
+                </h3>
+                <button type="button"
+                    class="bg-transparent hover:text-theme-text1 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:text-theme-darkText1"
+                    x-on:click="closeForm()">
+                    <svg class="size-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clip-rule="evenodd">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div class="h-full p-6 space-y-6 overflow-x-hidden overflow-y-auto bg-theme-light dark:bg-theme-dark"
+                id="modal-body">
+                <include href="{{ @modal_content ?? 'blocks/form.html'}}" />
+            </div>
+            <!-- Modal footer -->
+            <div class="flex items-center justify-end p-4 space-x-2 border-t rounded-b-xl bg-theme-tableHeader dark:bg-theme-darkTableHeader"
+                id="modal-footer">
+                <button x-on:click="validate()" class="button">{{t('table.save_btn')}}</button>
+            </div>
+        </div>
+    </dialog>
+</template>
+<!-- End Modal Form -->

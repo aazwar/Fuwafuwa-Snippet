@@ -1,0 +1,81 @@
+<f3:inject id="content">
+    <div
+        class="max-w-screen-lg p-6 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" class="mb-2 text-gray-500 size-10 dark:text-gray-400" aria-hidden="true"
+            fill="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+        <h2 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Track</h2>
+        <div class="font-normal text-gray-500 dark:text-gray-400" x-data="track">
+            <div class="grid md:grid-cols-2">
+                <div class="mb-2 text-gray-700 dark:text-gray-200">
+                    <div class="text-xs font-bold">Name</div>
+                    <div x-html="record.Name"></div>
+                </div>
+                <div class="mb-2 text-gray-700 dark:text-gray-200">
+                    <div class="text-xs font-bold">Album</div>
+                    <div x-html="record.AlbumName">album</div>
+                </div>
+                <div class="mb-2 text-gray-700 dark:text-gray-200">
+                    <div class="text-xs font-bold">Price</div>
+                    <div x-text="'$' + record.UnitPrice">price</div>
+                </div>
+                <div class="mb-2 text-gray-700 dark:text-gray-200">
+                    <div class="text-xs font-bold">Media Type</div>
+                    <div x-text="record.MediaTypeName">mediaType</div>
+                </div>
+                <div class="mb-2 text-gray-700 dark:text-gray-200">
+                    <div class="text-xs font-bold">Genre</div>
+                    <div x-html="record.GenreName">genre</div>
+                </div>
+                <div class="mb-2 text-gray-700 dark:text-gray-200">
+                    <div class="text-xs font-bold">Composer</div>
+                    <div x-text="record.Composer">composer</div>
+                </div>
+                <div class="mb-2 text-gray-700 dark:text-gray-200">
+                    <div class="text-xs font-bold">Length</div>
+                    <div x-text="record.Milliseconds">miliseconds</div>
+                </div>
+                <div class="mb-2 text-gray-700 dark:text-gray-200">
+                    <div class="text-xs font-bold">Size</div>
+                    <div x-text="record.Bytes">bytes</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script>
+        const track = {
+            record: { TrackId: ' ', Name: ' ', AlbumId: ' ', MediaTypeId: ' ', GenreId: ' ', Composer: ' ', Milliseconds: ' ', Bytes: ' ', UnitPrice: ' ', AlbumName: ' ', MediaTypeName: ' ', GenreName: ' ', },
+            init() {
+                let id = '{{@TrackId}}';
+                if (id) {
+                    fetchData('{{@BASE}}/ajax/chinook/track/load', { TrackId: id }).then(data => {
+                        data.Name = `<svg viewBox="0 0 24 24" class="inline mr-2 text-gray-500 size-4 dark:text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg> ${data.Name}`;
+                        data.AlbumName = `<a href="{{@BASE}}/chinook/album/${data.AlbumId}" class="underline">${data.AlbumName}</a>`;
+                        data.GenreName = `<a href="{{@BASE}}/chinook/genre/${data.GenreId}" class="underline">${data.GenreName}</a>`;
+                        data.Bytes = new Intl.NumberFormat('{{ @APP.lang }}', {
+                            style: 'unit', unit: 'megabyte', maximumFractionDigits: 1
+                        }).format(data.Bytes / 1024 / 1024);
+                        data.Milliseconds =
+                            new Intl.NumberFormat('{{ @APP.lang }}', {
+                                style: 'unit', unit: 'minute', maximumFractionDigits: 0
+                            }).format(data.Milliseconds / 60000) + ' ' +
+                            new Intl.NumberFormat('{{ @APP.lang }}', {
+                                style: 'unit', unit: 'second', maximumFractionDigits: 0, maximumFractionDigits: 0
+                            }).format(data.Milliseconds / 1000 % 60)
+                        this.record = data
+                    });
+                }
+            }
+        }
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

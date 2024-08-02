@@ -1,0 +1,27 @@
+<{?php
+namespace Ajax\Table;
+
+class {{ucwords(@table)}} extends \Fuwafuwa\Controller\FFTable {
+
+  function list($f3) {
+    $this->record_list('\Model\{{ucwords(@table)}}');
+  }
+
+  function edit($f3) {
+    // $uploads = $this->processUpload("", null, 0, false, false);
+    // $multi = [];
+    // foreach($uploads as $file) {
+    //   if(strpos($file['field'], '#')) { // multi files
+    //     $field = preg_replace('/#.*/', '', $file['field']);
+    //     $multi[$field][] = $file['url'];
+    //   } else {
+    //     $this->data['data'][$file['field']] = $file['url'];
+    //   }
+    // }
+    // foreach ($multi as $field => $value) {
+    //   $this->data['data'][$field] = join(', ', $value);
+    // }
+    
+    $this->ajaxEdit('\Model\{{ucwords(@table)}}');
+  }
+}

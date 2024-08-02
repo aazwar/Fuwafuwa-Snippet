@@ -1,0 +1,152 @@
+<{?php
+
+namespace Ajax\Table;
+
+class {{ ucwords(@table) }} {
+
+  use \Fuwafuwa\Traits\SQL;
+  use \Fuwafuwa\Traits\Validation;
+
+  private $data;
+  protected $db;
+
+  function __construct() {
+    $f3 = \Base::instance();    
+    $this->data = json_decode($f3['BODY'], true) ?? $f3['REQUEST'] ?? [];
+    $this->db = $f3['CONTAINER']('\Fuwafuwa\Db');
+  }
+
+  function execute(\Base $f3, string $action = ""): void {
+    header('Content-type: application/json;charset=utf-8');
+    if (method_exists($this, $action)) {
+      $this->$action($f3);
+    } else {
+      $f3->error(404);
+    }
+  }
+
+  private function clauses() {
+    ['search' => $search, 'searchable' => $searchable, 'limit' => $limit, 'size' => $size, 'pos' => $pos, 'sort' => $sort] = $this->data + ['search' => '', 'searchable' => [], 'limit' => '', 'size' => 30, 'pos' => 0, 'sort' => [], 'fields' => []];
+
+    $offset = $pos * $size;
+    $range = "LIMIT $size OFFSET $offset";
+
+    $order = '';
+    if ($sort) {
+      $order = "ORDER BY " . join(", ", array_map(fn ($e) => "$e[col] $e[sort]", $sort));
+    }
+
+    $clause = '';
+    if ($search && $searchable) {
+      $cond = [];
+      foreach ($searchable as $field) {
+        if ($field['op'] == 'LIKE') {
+          $search = escapeSQLString("%$search%");
+          $cond[] = "$field[field] LIKE $search";
+        } else {
+          $search = escapeSQLString($search);
+          $cond[] = "$field[field] $field[op] $search";
+        }
+      }
+      $clause = join(' OR ', $cond);
+      if ($limit) $clause = "$limit AND ($clause)";
+      $clause .= "WHERE $clause";
+    } else {
+      if ($limit) $clause .= "WHERE $limit";
+    }
+    [$clause, $range, $order];
+  }
+
+  function list($f3) {    
+    $sql = 'SELECT {{ join(', ', @fields) }} FROM {{@table}}';
+    [$cond, $range, $order] = $this->clauses();
+        
+    $total = $this->FSQL1("SELECT COUNT(1) FROM {{@table}} $cond");
+    $subset = $this->SQL("$sql $cond $order $range");
+    $result = [
+      'subset' => $subset,
+      'count' => floor($total / $this->data['size']) + 1,
+      'limit' => $this->data['size'],
+      'pos' => $this->data['pos'],
+      'total' => $total,
+    ];
+
+    print(json_encode(['success' => true, 'data' => $result]));
+  }
+
+  function load($f3) {
+    ${{ @keys }} = $this->data['{{@keys}}'];
+    $data = $this->SQL('SELECT {{ join(', ', @fields) }} FROM {{@table}} WHERE {{ @keys }} = ?', ${{ @keys }})[0] ?? [];
+    print(json_encode($data));
+  }
+
+  function ajaxEdit($f3) {
+    $data = $this->data['data'];
+    $oper = $this->data['oper'];
+
+    $record = new \DB\SQL\Mapper($this->db, '{{ @table }}', [{{ join(', ', array_map(fn($e) => "'$e'", @fields)) }}]);
+{~ function trans($type) {
+  switch($type) {
+    case 'number': return '|numeric';
+    case 'date': case 'datetime': return '|date';
+    default: return '';
+  };
+}
+~}
+
+<repeat group="{{ (array) @keys }}" value="{{ @key }}">    $keys[] = $data['{{ @key }}'];
+</repeat>
+    $record->load(['{{ join(' AND ', array_map(fn($e) => "$e = ?", (array)@keys)) }}', {{ join(', ', array_map(fn($e) => "\$data['@key']", (array) @keys)) }}]);
+
+    $validation = [
+      'rules' => [
+<repeat group="{{ @fields }}" value="{{ @field }}">
+        '{{@field}}' => 'required{{ trans(@types[@field]) }}',
+</repeat>
+      ],
+    ];
+
+    $result['success'] = true;
+    switch ($oper) {
+      case 'add':
+        if (!$record->dry()) {
+          $result['success'] = false;
+          $result['message'] = t('db.duplicate_record', $record->table(), '');
+        } else {
+          $record->copyfrom($data);
+          if ($validation) {
+            $valid = $this->validate($validation, $data);
+            if ($valid->fails()) {
+              $msg = $valid->errors()->firstOfAll();
+              die(json_encode(['success' => false, 'message' => $msg], JSON_UNESCAPED_UNICODE));
+            }
+          }
+          $record->save();
+
+          $result['message']['success'] = t('db.record_saved', ucwords($record->table()));
+          $result['data'] = array_intersect_key($record->cast(), array_flip(array_keys($data)));
+        }
+        break;
+      case 'edit':
+        $record->copyfrom($data);
+        if ($validation) {
+          $valid = $this->validate($validation, $data);
+          if ($valid->fails()) {
+            $msg = $valid->errors()->firstOfAll();
+            die(json_encode(['success' => false, 'message' => $msg], JSON_UNESCAPED_UNICODE));
+          }
+        }
+        $record->save();
+        $result['data'] = array_intersect_key($record->cast(), array_flip(array_keys($data)));
+        break;
+      case 'del':
+        $record->erase();
+        $result['data'] = $data;
+        break;
+      default:
+        // code...
+        break;
+    }
+    print json_encode($result, JSON_UNESCAPED_UNICODE);
+  }
+}

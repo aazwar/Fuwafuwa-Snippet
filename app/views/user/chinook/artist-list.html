@@ -1,0 +1,44 @@
+<f3:inject id="content">
+    <!-- Generated: 2022-08-12 15:50 -->
+    <h2 class="text-lg font-bold">Artist</h2>
+    <div x-data="FFTable(artist)">
+        <include href="blocks/table.html" />
+        <include href="blocks/modal-form.html" />
+    </div>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        let artist = {
+            fields: [
+                { title: 'Artist Id', name: 'ArtistId', hidden: true, readonly: true },
+                {
+                    title: 'Name', name: 'Name', raw: true, formatter(v, c, d) {
+                        return `<a href="{{@BASE}}/chinook/artist/${d.ArtistId}" class="underline">${v}</a>`;
+                    }
+                },
+                { title: 'Albums', name: 'Albums', class: 'text-right', virtual: true },
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/chinook/artist/elist',
+                editable: true,
+                selection: 'single',
+                pageSize: 20,
+                sorting: 'multiple',
+                size: 'small',
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/chinook/artist/edit',
+                object: 'Artist',
+                size: 'normal', // small, normal, large, huge 
+                columns: 1,
+                pk: ['ArtistId'], // primary key
+            }
+        }
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

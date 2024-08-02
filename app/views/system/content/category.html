@@ -1,0 +1,47 @@
+<f3:inject id="content">
+    <!-- Generated: 2022-09-27 19:35 -->
+    <div class="px-4 py-6">
+        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Category</h1>
+        <div x-data="FFTable(category)">
+            <include href="blocks/table.html" />
+            <include href="blocks/modal-form.html" />
+        </div>
+    </div>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        let category = {
+            fields: [
+                { title: 'Id', name: 'id', hidden: true },
+                { title: 'Name', name: 'name', formatter(v, c, d) { return d.parent_id ? "\t" + v : v } },
+                { title: 'Slug', name: 'slug' },
+                { title: 'Parent', name: 'parent', type: 'select', options: eval(` ({{ \Util\Content::parentCategoryOption() }} ) `) },
+                { title: 'Created', name: 'created', readonly: true },
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/content/categories',
+                editable: true,
+                selection: 'single',
+                pageSize: 20,
+                sorting: 'none',
+                display: 'compact',
+                toolbar: '{{ rbac_session_permission("category.edit")}}' ? [] : '',
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/content/category-edit',
+                csrf: { field: '_token', value: '{{ csrf() }}' },
+                object: 'Category',
+                size: 'normal', // small, normal, large, huge 
+                columns: 1,
+                pk: ['id'], // primary key
+                inline: true,
+            }
+        }
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

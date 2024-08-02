@@ -1,0 +1,46 @@
+{
+    "name": "fuwafuwa-framework",
+    "author": "Azrul Azwar",
+    "email": "azrul.azwar@gmail.com",
+    "license": "Private",
+    "version": "1.0",
+    "private": true,
+    "dependencies": {
+        "@tailwindcss/typography": "^0.5.13",
+        "alpinejs": "^3.14.1",
+        "apexcharts": "^3.49.2",
+        "dayjs": "^1.11.11",
+        "exceljs": "^4.4.0",
+        "file-saver": "^2.0.5",
+        "flowbite": "^2.4.1",
+        "flowbite-typography": "^1.0.3",
+        "postcss-nested": "^6.0.1",
+        "tailwindcss": "^3.4.4",
+        "tailwindcss-animate": "^1.0.7",
+        "tinymce": "^6.8.4"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.19",
+        "cssnano": "^6.1.2",
+        "postcss-cli": "^11.0.0"
+    },
+    "files": [
+        ".htaccess",
+        "app/**",
+        "css/**",
+        "fonts/**",
+        "images/**",
+        "js/**",
+        "media/**",
+        "tmp/**",
+        "uploads/",
+        "vendor/**",
+        "favicon.ico",
+        "index.php",
+        "lisensi.txt",
+        "optimize-css.sh",
+        "package.json",
+        "robots.txt",
+        "tailwind.config.js"
+    ]
+}

@@ -1,0 +1,85 @@
+<f3:inject id="content">
+    <div class="px-6 py-4">
+        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">{{ t('user.user_list') }}</h1>
+        <div x-data="data">
+            <include href="blocks/table.html" />
+            <include href="blocks/modal-form.html" />
+        </div>
+    </div>
+</f3:inject>
+<f3:inject id="script" mode="append">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        dayjs.locale('{{@APP.lang}}')
+        const number = new Intl.NumberFormat('{{ @APP.lang_loc }}', {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        });
+
+        let settings = {
+            fields: [
+                { title: '{{ t("user.login") }}', name: 'login', readonly(f) { return f.oper != 'add' }, searchable: true, filter: { op: 'LIKE' } },
+                { title: '{{ t("user.fullname") }}', name: 'fullname', searchable: true, order: 1, filter: {} },
+                {
+                    title: '{{ t("user.role") }}', name: 'role', type: 'checkboxes',
+                    options: JSON.parse(`{{ c('\Util\Html')->selectOption('\Fuwafuwa\Model\Role', '', 'role', 'name', ['role <> "member"']) }}`),
+                    fclass: 'col-span-2', cols: 3,
+                    decoder(v) { return v.split(/,/) },
+                    encoder(v) { return v.join(',') },
+                    default: [],
+                },
+
+                { title: '{{ t("user.token") }}', name: 'token', type: 'textarea', visible: false, readonly: true, },
+                { title: '{{ t("user.push_token") }}', name: 'push_token', type: 'textarea', visible: false, readonly: true },
+                {
+                    title: '{{ t("user.active") }}', name: 'active', type: 'checkbox', raw: true, formatter(e) {
+                        if (e) return `<span class="badge">{{ t("user.status_active") }}</span>`;
+                        return `<span class="badge badge-red">{{ t("user.status_inactive") }}</span>`;
+                    }
+                },
+                { title: '{{ t("user.password") }}', name: 'password1', type: 'password', visible: false },
+                { title: '{{ t("user.confirmation") }}', name: 'password2', type: 'password', visible: false },
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/user/list',
+                editable: true,
+                selection: 'single',
+                pageSize: 30,
+                display: 'compact',
+                class: {
+                },
+                rowClass: 'whitespace-nowrap',
+                sorting: 'multiple',
+                noDataMessage: '{{ t("table.no_data")}}',
+                filter: {
+                    cols: 2,
+                },
+                tableInit() {
+                    xdata = this;
+                }
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/user/edit',
+                csrf: {
+                    field: '_token',
+                    value: '{{ csrf() }}',
+                },
+                object: 'User',
+                size: 'large', // small, normal, large, huge 
+                columns: 2,
+                class: {
+                    token: 'col-start-1',
+                    password1: 'col-start-1',
+                }
+            }
+        }
+        let xdata;
+        let data = FFTable(settings);
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

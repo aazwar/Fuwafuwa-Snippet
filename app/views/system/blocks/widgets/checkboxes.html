@@ -1,0 +1,63 @@
+<!-- checkboxes {{@title ?? ''}} -->
+{~
+$loptions = preg_split("/\s*\|\s*/", @options ?? "");
+$label = [];
+$value = [];
+if(strpos($loptions[0], ",") > -1) {
+foreach($loptions as $opt) {
+[$l,$v] = explode(",", $opt);
+$label[] = $l;
+$value[] = $v;
+}
+} else {
+$label = $loptions;
+$value = $loptions;
+}
+
+if(!empty(@inline)) {
+$dclass = 'grid-cols-4 [&>:not(label)]:col-span-3';
+$lclass = 'text-right pr-2 py-2.5';
+$sclass = '!col-start-2';
+} else {
+$dclass = 'items-center';
+$lclass = '';
+$sclass = '';
+}
+switch(@cols ?? 1) {
+case 2: $cclass = 'grid-cols-2'; break;
+case 3: $cclass = 'grid-cols-3'; break;
+case 4: $cclass = 'grid-cols-4'; break;
+default: $cclass = '';
+}
+$mark = !empty(@required) ? '<span class="text-theme-error">*</span>' : '';
+~}
+{~ if(empty(@model)): ~}
+<div class="text-red-600">&lt;ff:checkbox&gt; error: model is required</div>
+{~ elseif(empty(@options)): ~}
+<div class="text-red-600">&lt;ff:checkbox&gt; error: options is required</div>
+{~ else: ~}
+<div class="grid gap-1 items-start content-start {{ @dclass }} {{@class ?? ''}}" {{ @coattr ?? '' | raw }}>
+    <label :for="$id('input')" class="input-label {{ @lclass }}">{{@title ?? ""}} {{$mark}}</label>
+    <div class="flex p-2.5 bg-theme-inputBackground rounded-xl">
+        <div class="grid gap-2 w-full {{ $cclass }}">
+            {~ foreach($value as $i => $v): ~}
+            <div x-id="['checkbox']" class="flex justify-start">
+                <input :id="$id('checkbox')" type="checkbox" class="p-2 checkbox" value="{{ @v }}" {{ @attr ?? '' | raw
+                    }} x-bind:checked="Array.isArray({{ @model }}) ? {{ @model }}.some(e => e == '{{ @v }}') : false"
+                    x-on:click="{{ $model }} = {{ $model }}.some(e => e == '{{ @v }}') ? {{ $model }}.filter(e => e != '{{ @v }}') : [...{{ $model }}, '{{ @v }}']">
+                <label x-bind:for="$id('checkbox')"
+                    class="ml-2 text-sm font-medium text-theme-inputText dark:text-theme-darkInputText">{{
+                    $label[@i]
+                    }}</label>
+            </div>
+            {~ endforeach; ~}
+        </div>
+    </div>
+    {~ if(!empty(@explanation) || !empty(@exattr)): ~}
+    <span class="text-xs {{ @sclass }}" {{ @exattr ?? '' | raw }}>{{@explanation ?? ''| raw}}</span>
+    {~ endif; ~}
+    {~ if(!empty(@errormodel)): ~}
+    <span class="text-xs text-theme-error dark:text-theme-darkError {{ @sclass }}" x-text="{{ @errormodel }}"></span>
+    {~ endif; ~}
+</div>
+{~ endif; ~}

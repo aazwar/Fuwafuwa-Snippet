@@ -1,0 +1,52 @@
+<f3:inject id="meta" mode="prepend">
+    <meta charset="UTF-8" />
+    <!-- <base href="{{@BASE}}/"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{ @title ?? @APP.title }} – {{ @COMPANY.name }}</title>
+    <meta name="description" content="{{ @APP.description }}" />
+    <meta name="keywords" content="{{ @APP.keywords }}" />
+    <meta name="copyright" content="{{ @APP.copyright }}" />
+    <meta name="robots" content="index,nofollow" />
+    <check if="{{@PATH == '/'}}">
+        <check if="{{!empty(@COMPANY.email)}}">
+            <meta name="contact" content="{{@COMPANY.email}}" />
+        </check>
+        <check if="{{ !empty(@SOCIAL.tw) }}">
+            <!-- Twitter Card data -->
+            <meta name="twitter:card" content="summary">
+            <meta name="twitter:site" content="{{@SOCIAL.tw}}">
+            <meta name="twitter:title" content="{{ @title ?? '' }} - {{ @APP.title }}">
+            <meta name="twitter:description" content="{{ @APP.description }}">
+            <meta name="twitter:creator" content="@{{ basename(@SOCIAL.tw) }}">
+            <!-- Twitter Summary card images must be at least 120x120px -->
+            <meta name="twitter:image" content="{{@ROOT_URL}}{{@COMPANY.logo_image}}">
+        </check>
+        <check if="{{ !empty(@SOCIAL.fb) }}">
+            <!-- Open Graph data -->
+            <meta property="og:title" content="{{ @title ?? @APP.title }} – {{ @COMPANY.name }}" />
+            <meta property="og:type" content="article" />
+            <meta property="og:url" content="{{@ROOT_URL}}" />
+            <meta property="og:image" content="{{@ROOT_URL}}{{@COMPANY.logo_image}}" />
+            <meta property="og:description" content="{{ @APP.description }}" />
+            <meta property="og:site_name" content="{{ @COMPANY.name }} website" />
+            <meta property="fb:admins" content="{{ basename(@SOCIAL.fb) }}" />
+        </check>
+        <check if="{{!empty(@WEBSITE.google_meta)}}">
+            <meta name="google-site-verification" content="{{@WEBSITE.google_meta}}" />
+        </check>
+        <check if="{{!empty(@WEBSITE.facebook_meta)}}">
+            <meta name="facebook-site-verification" content="{{@WEBSITE.facebook_meta}}" />
+        </check>
+        <check if="{{!empty(@WEBSITE.bing_meta)}}">
+            <meta name="msvalidate.01" content="{{@WEBSITE.bing_meta}}" />
+        </check>
+        <check if="{{!empty(@WEBSITE.yandex_meta)}}">
+            <meta name="yandex-verification" content="{{@WEBSITE.yandex_meta}}" />
+        </check>
+    </check>
+    <check if="{{!empty(@WEBSITE.header_script)}}">
+        {{ \Preview::instance()->resolve(@WEBSITE.header_script) | raw }}
+    </check>
+</f3:inject>

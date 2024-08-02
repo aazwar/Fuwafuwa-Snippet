@@ -1,0 +1,50 @@
+<f3:inject id="content">
+    <!-- Generated: 2022-09-23 20:15 -->
+    <div class="px-4 py-6">
+        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Media</h1>
+        <div x-data="FFTable(media)">
+            <include href="blocks/table.html" />
+            <include href="blocks/modal-form.html" />
+        </div>
+    </div>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        let media = {
+            fields: [
+                { title: 'Id', name: 'id', visible: false, readonly: true },
+                { title: 'Name', name: 'name', class: 'whitespace-nowrap' },
+                { title: 'Title', name: 'title', searchable: true },
+                { title: 'Description', name: 'description', searchable: true, sortable: false },
+                { title: 'Url', name: 'url', raw: true, formatter(v) { return `<img src="{{@BASE}}/${v}" class="max-w-60">` }, class: 'w-64', readonly: true, sortable: false },
+                {
+                    title: 'Meta', name: 'meta', readonly: true, sortable: false, decoder: v => JSON.parse(v), raw: true,
+                    formatter: v => Object.keys(v).map(e => `<b>${e}:</b> ${v[e]}`).join("<br>")
+                },
+                { title: 'Owner', name: 'owner', readonly: true },
+                { title: 'Created', name: 'created', class: 'whitespace-nowrap', readonly: true, formatter(v) { return dayjs(v).format('ddd, D MMM \'YY HH:mm') }, },
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/content/media-list',
+                editable: true,
+                selection: 'single',
+                pageSize: 20,
+                sorting: 'multiple',
+                addable: false,
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/content/media-edit',
+                object: 'Media',
+                size: 'normal', // small, normal, large, huge 
+                columns: 1,
+                pk: ['id'], // primary key
+            }
+        }
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

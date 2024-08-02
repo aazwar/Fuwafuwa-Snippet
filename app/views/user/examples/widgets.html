@@ -1,0 +1,243 @@
+<f3:inject id="style" type="append">
+    <link rel="stylesheet" href="{{@BASE}}/docs/default.min.css">
+</f3:inject>
+<f3:inject id="content">
+    <div class="flex flex-col gap-2 px-4 py-6">
+        <div id="container" class="max-w-screen-lg py-2 mb-2 bg-white" x-data="{ page: 0 }">
+            <ul class="mb-2 tab-container">
+                <li class="tab" :class="{ 'tab-active': page == 0 }" @click="page = 0">Tab 1</li>
+                <li class="tab" :class="{ 'tab-active': page == 1 }" @click="page = 1">Tab 2</li>
+                <li class="tab tab-disabled">Tab 3</li>
+            </ul>
+            <div x-show="page == 0">Content 1</div>
+            <div x-show="page == 1">Content 2</div>
+        </div>
+        <pre class="not-format"><code>&lt;div id="container" class="max-w-screen-lg py-2 mb-2 bg-white" x-data="{ page: 0 }">
+    &lt;ul class="tab-container">
+        &lt;li class="tab" :class="{ 'tab-active': page == 0 }" @click="page = 0">Tab 1&lt;/li>
+        &lt;li class="tab" :class="{ 'tab-active': page == 1 }" @click="page = 1">Tab 2&lt;/li>
+        &lt;li class="tab tab-disabled">Tab 3&lt;/li>
+    &lt;/ul>
+&lt;/div>
+&lt;div x-show="page == 0">Content 1&lt;/div>
+&lt;div x-show="page == 1">Content 2&lt;/div></code></pre>
+        <div class="flex flex-wrap gap-2 mb-2">
+            <repeat group="{{ ['gray', 'black', 'green', 'red', 'yellow', 'purple', 'blue'] }}" value="{{@color}}">
+                <button type="button" class="button button-{{@color}}">Button</button>
+            </repeat>
+        </div>
+        <div>
+            <button class="button button-tiny">Tiny</button>
+            <button class="button button-small button-green">Small</button>
+            <button class="button button-large button-yellow">Large</button>
+            <button class="button button-huge button-red">Huge</button>
+        </div>
+        <pre class="not-format"><code>&lt;div class="flex flex-wrap gap-2 mb-2">
+    &lt;button type="button" class="button button-gray">Button&lt;/button>
+    &lt;button type="button" class="button button-black">Button&lt;/button>
+    &lt;button type="button" class="button button-green">Button&lt;/button>
+    &lt;button type="button" class="button button-red">Button&lt;/button>
+    &lt;button type="button" class="button button-yellow">Button&lt;/button>
+    &lt;button type="button" class="button button-purple">Button&lt;/button>
+    &lt;button type="button" class="button button-blue">Button&lt;/button>
+&lt;/div>
+&lt;div>
+    &lt;button class="button button-tiny">Tiny&lt;/button>
+    &lt;button class="button button-small button-green">Small&lt;/button>
+    &lt;button class="button button-large button-yellow">Large&lt;/button>
+    &lt;button class="button button-huge button-red">Huge&lt;/button>
+&lt;/div></code></pre>
+        <div class="grid max-w-screen-md grid-cols-2 gap-2">
+            <div class="alert alert-info">
+                <span>Info</span>
+            </div>
+            <div class="alert alert-danger alert-border">
+                <span>Danger border</span>
+            </div>
+        </div>
+        <pre class="not-format"><code>&lt;div class="grid max-w-screen-md grid-cols-2 gap-2">
+    &lt;div class="alert alert-info">
+        &lt;span>Info&lt;/span>
+    &lt;/div>
+    &lt;div class="alert alert-danger alert-border">
+        &lt;span>Danger border&lt;/span>
+    &lt;/div>
+&lt;/div></code></pre>
+        <div class="flex flex-wrap gap-2 py-2" x-data="{ progress: 60}">
+            <div class="radial-progress" :style="{ '--value': progress } " x-text="progress + '%'"></div>
+            <div class="radial-progress text-primary" :style="{ '--value': progress } " x-text="progress + '%'"></div>
+            <div class="border-4 radial-progress bg-theme-background2 text-theme-text2 border-theme-background1"
+                :style="{ '--value': 70 } " x-text="progress + '%'"></div>
+            <div class="radial-progress" style="--size:12rem; --thickness: 2px;" :style="{ '--value': progress } "
+                x-text="progress + '%'">
+            </div>
+            <div class="radial-progress" style="--size:12rem; --thickness: 2rem;" :style="{ '--value': progress } "
+                x-text="progress + '%'">
+            </div>
+            <div class="w-full">
+                <ff:input type="number" x-model="progress" title="Progress" style="width: 120px;" inline="true" />
+            </div>
+        </div>
+        <pre class="not-format"><code>&lt;div class="flex flex-wrap gap-2 py-2" x-data="{ progress: 60}">
+    &lt;div class="radial-progress" :style="{ '--value': progress } " x-text="progress + '%'">&lt;/div>
+    &lt;div class="radial-progress text-primary" :style="{ '--value': progress } " x-text="progress + '%'">&lt;/div>
+    &lt;div class="border-4 radial-progress bg-theme-background2 text-theme-text2 border-theme-background1"
+        :style="{ '--value': 70 } " x-text="progress + '%'">&lt;/div>
+    &lt;div class="radial-progress" style="--size:12rem; --thickness: 2px;" :style="{ '--value': progress } "
+        x-text="progress + '%'">
+    &lt;/div>
+    &lt;div class="radial-progress" style="--size:12rem; --thickness: 2rem;" :style="{ '--value': progress } "
+        x-text="progress + '%'">
+    &lt;/div>
+&lt;/div></code></pre>
+        <div class="flex flex-col items-center gap-2 p-2 mb-4">
+            <div class="progress progress-gray progress-small" style="--value: 10;"></div>
+            <div class="progress progress-green" style="--value: 50;"></div>
+            <div class="progress progress-large" style="--value: 18.9;"></div>
+            <div class="progress progress-red progress-huge" style="--value: 67; --text: 'text for huge progress'">
+            </div>
+        </div>
+        <pre class="not-format"><code>&lt;div class="flex flex-col items-center gap-2 p-2 mb-4">
+    &lt;div class="progress progress-gray progress-small" style="--value: 10;">&lt;/div>
+    &lt;div class="progress progress-green" style="--value: 50;">&lt;/div>
+    &lt;div class="progress progress-large" style="--value: 18.9;">&lt;/div>
+    &lt;div class="progress progress-red progress-huge" style="--value: 67; --text: 'text for huge progress'">
+    &lt;/div>
+&lt;/div></code></pre>
+        <div class="flex flex-wrap gap-2 mb-2">
+            <repeat group="{{ ['gray', 'green', 'red', 'yellow', 'purple', 'blue', 'indigo', 'pink'] }}"
+                value="{{@color}}">
+                <span class="badge badge-{{@color}}">{{@color}}</span>
+            </repeat>
+        </div>
+        <pre class="not-format"><code>&lt;div class="flex flex-wrap gap-2 mb-2">
+    &lt;span class="badge badge-gray">gray&lt;/span>
+    &lt;span class="badge badge-green">green&lt;/span>
+    &lt;span class="badge badge-red">red&lt;/span>
+    &lt;span class="badge badge-yellow">yellow&lt;/span>
+    &lt;span class="badge badge-purple">purple&lt;/span>
+    &lt;span class="badge badge-blue">blue&lt;/span>
+    &lt;span class="badge badge-indigo">indigo&lt;/span>
+    &lt;span class="badge badge-pink">pink&lt;/span>
+&lt;/div></code></pre>
+        <div class="grid max-w-screen-md grid-cols-2 gap-2 mb-2" id="test_opts" x-data="data">
+            <ff:input title="Fullname" explanation="First name and family name" />
+            <ff:input title="Job" inline="true" explanation="<span class='italic'>current job</span>" />
+            <pre class="col-span-2 not-format"><code>&lt;ff:input title="Fullname" explanation="First name and family name" />
+&lt;ff:input title="Job" inline="true" explanation="&lt;span class='italic'>current job&lt;/span>" /></code></pre>
+            <ff:textarea title="Content" explanation="text content" />
+            <ff:textarea title="Content 2" inline="true" explanation="Optional content" />
+            <pre class="col-span-2 not-format"><code>&lt;ff:textarea title="Content" explanation="text content" />
+&lt;ff:textarea title="Content 2" inline="true" explanation="Optional content" /></code></pre>
+            <ff:content title="Text" content="text1" explanation="content1" />
+            <ff:content title="Text" content="text1" inline="true" explanation="content2" />
+            <pre class="col-span-2 not-format"><code>&lt;ff:content title="Text" content="text1" explanation="content1" />
+&lt;ff:content title="Text" content="text1" inline="true" explanation="content2" /></code></pre>
+            <ff:radio title="Radio" options="Opt1,1|Opt2,2|Opt3,3|Long Option Radio,4|Etc Option,5" x-model="radio"
+                explanation="Select one of the button" cols="3" />
+            <ff:radio title="Radio" options="Opt1|Opt2|Opt3|Long Option|Etc Option" x-model="radio2"
+                explanation="Select one of the button" inline="true" />
+            <pre class="col-span-2 not-format"><code>&lt;ff:radio title="Radio" options="Opt1,1|Opt2,2|Opt3,3|Long Option Radio,4|Etc Option,5" x-model="radio"
+    explanation="Select one of the button" cols="3" />
+&lt;ff:radio title="Radio" options="Opt1|Opt2|Opt3|Long Option|Etc Option" x-model="radio2"
+    explanation="Select one of the button" inline="true" /></code></pre>
+            <ff:select title="Select" options="|Opt1|Opt2" x-model="select" />
+            <ff:select title="Select" options="|Opt1|Opt2" x-model="select" inline="true" />
+            <pre class="col-span-2 not-format"><code>&lt;ff:select title="Select" options="|Opt1|Opt2" x-model="select" />
+&lt;ff:select title="Select" options="|Opt1|Opt2" x-model="select" inline="true" /></code></pre>
+            <div class="col-span-2">
+                <ff:checkboxes title="Multi checkbox"
+                    options="Opt1|Opt2|Opt3|Quiet Long Options|Very verbose option to put into this input box" cols="3"
+                    model="checks" explanation="tick all that apply" />
+            </div>
+            <pre class="col-span-2 not-format"><code>&lt;ff:checkboxes title="Multi checkbox"
+    options="Opt1|Opt2|Opt3|Quiet Long Options|Very verbose option to put into this input box" cols="3"
+    model="checks" explanation="tick all that apply" /></code></pre>
+            <ff:checkbox title="Checkbox" x-model="check" explanation="single checkbox" />
+            <ff:checkbox title="Checkbox" x-model="check" inline="true" explanation="inline checkbox" />
+            <pre class="col-span-2 not-format"><code>&lt;ff:checkbox title="Checkbox" x-model="check" explanation="single checkbox" />
+&lt;ff:checkbox title="Checkbox" x-model="check" inline="true" explanation="inline checkbox" /></code></pre>
+            <ff:autocomplete title="Autocomplete" x-model="autocomplete"
+                options="Autocomplete 1|Some Random Text|Another Text|Wise Quote|Demotivational Saying|Gibberish Talk|Murmur"
+                default="autocomplete" />
+            <ff:autocomplete title="Country" x-model="country" lookupUrl="{{@BASE}}/ajax/test/country?q="
+                coattr="id='country'" default="country" />
+            <pre class="col-span-2 not-format"><code>&lt;ff:autocomplete title="Autocomplete" x-model="autocomplete"
+    options="Autocomplete 1|Some Random Text|Another Text|Wise Quote|Demotivational Saying|Gibberish Talk|Murmur"
+    default="autocomplete" />
+&lt;ff:autocomplete title="Country" x-model="country" lookupUrl="{{@BASE}}/ajax/test/country?q="
+    coattr="id='country'" default="country" /></code></pre>
+        </div>
+        <ff:rating size="large" value="2.2" />
+        <pre class="not-format"><code>&lt;ff:rating size="large" value="2.2" /></code></pre>
+        <ff:card link="{{@BASE}}/login" title="Test Card" image="{{@BASE}}/docs/images/fuwafuwa-framework.webp">
+            <p>Hello all,</p>
+            <p>Let's go to the beach</p>
+            <button class="button button-green" onclick="popupInfo('Test info')">Test3</button>
+        </ff:card>
+        <pre class="not-format"><code>&lt;ff:card link="{{@BASE}}/login" title="Test Card" image="{{@BASE}}/docs/images/fuwafuwa-framework.webp">
+    &lt;p>Hello all,&lt;/p>
+    &lt;p>Let's go to the beach&lt;/p>
+    &lt;button class="button button-green" onclick="popupInfo('Test info')">Test3&lt;/button>
+&lt;/ff:card></code></pre>
+        <div x-data="{ submitting: false }" class="flex gap-2">
+            <div><button class="button button-small" x-on:click="submitting = !submitting">Spinner</button></div>
+            <ff:spinner x-show="submitting" x-cloak />
+        </div>
+        <pre class="not-format"><code>&lt;div x-data="{ submitting: false }" class="flex gap-2">
+    &lt;div>&lt;button class="button button-small" x-on:click="submitting = !submitting">Spinner&lt;/button>&lt;/div>
+    &lt;ff:spinner x-show="submitting" x-cloak />
+&lt;/div></code></pre>
+        <div class="mt-2"><button class="button" @click="modal_modal1.open()">Open Modal</button></div>
+    </div>
+    <ff:modal id="modal1" title="Modal1" size="large">
+        <div class="min-h-[70vh] px-6 py-4" x-data="modal1">
+            <div class="mb-4">
+                <span x-text="ctext"></span>
+            </div>
+            <button class="button" @click="modal_modal2.open()">Show 2nd modal</button>
+        </div>
+    </ff:modal>
+    <pre class="not-format"><code>&lt;ff:modal id="modal1" title="Modal1" size="large">
+    &lt;div class="min-h-[70vh] px-6 py-4" x-data="modal1">
+        &lt;div class="mb-4">
+            &lt;span x-text="ctext">&lt;/span>
+        &lt;/div>
+        &lt;button class="button" @click="modal_modal2.open()">Show 2nd modal&lt;/button>
+    &lt;/div>
+&lt;/ff:modal></code></pre>
+    <ff:modal id="modal2" title="Image">
+        <div class="h-[50vh] flex flex-col" x-data="{}">
+            <div class="grid flex-1 gap-2 px-6 py-4 overflow-y-auto">
+                <p>Promises have state, they start as pending and can settle to:</p>
+                <p>
+                    fulfilled meaning that the computation completed successfully.
+                    rejected meaning that the computation failed.
+                    Promise returning functions should never throw, they should return rejections instead. Throwing from
+                    a
+                    promise returning function will force you to use both a } catch { and a .catch. People using
+                    promisified
+                    APIs do not expect promises to throw. If you're not sure how async APIs work in JS - please see this
+                    answer first.
+                </p>
+            </div>
+            <div class="px-6 py-4"><button class="button"
+                    @click="modal_modal2.close(); modal1.$data.ctext = 'The text has been changed'">Return</button>
+            </div>
+        </div>
+    </ff:modal>
+</f3:inject>
+<f3:inject id="script" type="append">
+    <script src="{{@BASE}}/docs/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script>
+        let modal1 = {
+            ctext: 'This will change after opening the 2nd modal',
+        }
+        let data = {
+            radio: '1', radio2: 'Opt1', select: 'Opt2', checks: [], check: 0, autocomplete: 'Wise Quote', country: 'Barbados',
+        }
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

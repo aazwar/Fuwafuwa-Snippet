@@ -1,0 +1,112 @@
+<!-- Generated: {{ date('Y-m-d H:i') }} -->
+<{f3:inject id="content" }>
+  <div
+    class="grid gap-3 {{ @form.columns == 2 ? 'md:grid-cols-2' : (@form.column == 3 ? 'md:grid-cols-3' : 'md:grid-cols-1') }} {{ (@form.size == 'small' ? 'max-w-md' : form.size == 'large' ? 'max-w-4xl' : form.size == 'huge' ? 'max-w-7xl' : 'max-w-lg') }}"
+    {{ @form.watch ? '@value-change="valueChange($event.detail)">' : '' }}>
+    <repeat group="{{ array_filter(@fields, fn($e) => !($e['virtual'] || $e['hidden'])) }}" value="{{@field}}"
+      count="{{ @index }}">
+      <!-- {{ @field.title }} -->
+      <div
+        class="{{ @form.class[@field.name] ?? '' }} {{ @form.inline ? 'grid grid-cols-4 [&>:not(label)]:col-span-3' : '' }}"
+        x-id="['input']">
+        <label :for="$id('input')"
+          class="block text-sm font-medium text-gray-900 dark:text-white {{ @form.inline ? 'text-right pr-1 py-2.5' : 'mb-2' }}">{{@field.title}}</label>
+        <div>
+          <check if="{{ @field.type == 'checkbox' }}"> {* CHECKBOX *}
+            <input :id="$id('input')" type="checkbox" :checked="Boolean(data['{{@field.name}}'])" name="{{@field.name}}"
+              value="1" x-model="data['{{ @field.name }}']"
+              class="size-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 {{ @form.inline ? 'my-2.5' : '' }}">
+          </check>
+          <check
+            if="{{ in_array(@field.type ?: 'text', ['number', 'date', 'datetime-local', 'email', 'month', 'password', 'tel', 'time', 'text', 'url', 'week']) }}">
+            {* INPUT *}
+            <input type="{{@field.type ?: 'text'}}" name="{{@field.name}}" :id="$id('input')"
+              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 disabled:opacity-30"
+              x-model="data['{{ @field.name }}']" class="{{@field.type == 'number' ? 'text-right' : ''}}"
+              :value="data['{{@field.name}}']" {{@field.readonly ? 'disabled' : '' }} autocomplete="off">
+          </check>
+          <check if="{{ @field.type == 'file' }}">
+            <div class="flex gap-2">
+              <input type="{{@field.type}}" name="{{@field.name}}" :id="$id('input')"
+                @change="data['{{@field.name}}'] = Object.values($event.target.files)"
+                class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 flex-1"
+                {{@field.readonly ? 'disabled' : '' }} autocomplete="off"
+                x-init="field.attr && Object.keys(field.attr).forEach(e => $el.setAttribute(e, field.attr[e]))">
+              <button
+                @click="data['{{@field.name}}'] = null; document.querySelector(`[name='{{@field.name}}']`).value = ''">
+                <svg class="size-6 text-gray-500 dark:text-gray-400" aria-hidden="true" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-x">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </check>
+          <check if="{{ @field.type == 'select' }}">{* SELECT *}
+            <select :id="$id('input')" :name="field.name"
+              @change="isWatched('{{@field.name}}') && $dispatch('value-change', { table: table.id, field: '{{@field.name}}', value: $el.value })"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              x-model="data['{{ @field.name }}']" :value="data['{{@field.name}}']">
+              <repeat group="{{ @field.options }}" value="{{ @option }}">
+                <option value="'{{@option.value}}'" :selected="option.value == data['{{@field.name}}']">
+                  {{@option.label}}</option>
+              </repeat>
+            </select>
+          </check>
+          <check if="{{ @field.type == 'radio' }}">{* RADIO *}
+            <div class="flex">
+              <div class="flex items-center gap-4">
+                <repeat group="{{ @field.options }}" value="{{ @radio }}" count="{{ @index }}">
+                  <div x-id="['radio']">
+                    <input :checked="data['{{@field.name}}'] == '{{@radio.value}}'" :id="$id('radio')" type="radio"
+                      value="{{@radio.value}}" name="{{@field.name}}" x-model="data['{{ @field.name }}']"
+                      class="size-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label :for="$id('radio')"
+                      class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{@radio.label}}</label>
+                  </div>
+                </repeat>
+              </div>
+            </div>
+          </check>
+          <check if="{{ @field.type == 'textarea'}}">{* TEXTAREA *}
+            <textarea :id="$id('input')" rows="4" name="{{@field.name}}"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              x-model="data['{{ @field.name }}']" x-text="data['{{@field.name}}']"></textarea>
+          </check>
+        </div>
+        <span class="mt-2 text-xs text-red-600 dark:text-red-400" x-text="errors['{{@field.name}}']"></span>
+      </div>
+    </repeat>
+  </div>
+  <{ /f3:inject}>
+    <{f3:inject id="script" type="append" }>
+      <script>
+        let data = {
+          form: {
+            id: '{{ @form.modalId }}',
+            object: '{{ @form.object }}',
+            oper: 'add',
+          },
+          data: {},
+          errors: {},
+          valueChange(event) {
+            console.log(event)
+          },
+          fetchData(url, data) {
+            return new Promise((resolve, reject) => {
+              fetch(url, { method: 'POST', body: JSON.stringify(data) }).then(response => response.json())
+                .then(json => {
+                  if (json.code) {
+                    reject(json.code == 500 ? json.status : json.text)
+                  } else if (json.success) {
+                    resolve(json.data);
+                  } else {
+                    reject(json.message);
+                  }
+                }).catch(e => reject(e))
+            })
+          },
+        };
+      </script>
+      <{ /f3:inject}>

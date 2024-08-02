@@ -1,0 +1,17 @@
+<f3:inject id="content">
+    <div class="px-4 py-6">
+        <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-gray-200">{{ t('register.activation') }}
+        </h2>
+        <ff:spinner />
+    </div>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        fetchData('{{ @BASE }}/ajax/member/activate', { token: '{{@REQUEST.token ?? ""}}' }).then(
+            resp => popupInfo(resp.join("<br>"), '', () => location.href = '{{@BASE}}/'),
+            error => popupError(error, '', () => location.href = '{{@BASE}}/')
+        );
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

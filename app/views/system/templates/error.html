@@ -1,0 +1,14 @@
+<f3:inject id="content">
+  <div class="max-w-screen-lg mx-auto dark:text-gray-200">
+    <h1>{{@ERROR.status}}</h1>
+    <pre>{{@ERROR.text}}</pre>
+    <check if="{{@ERROR.code == 500 && @DEBUG}}">
+      <code class="whitespace-pre-wrap">
+      {{@ERROR.trace|raw}}
+      </code>
+    </check>
+    <check if="{{@ERROR.code == 401}}">
+      <include href="templates/login_block.html" />
+    </check>
+  </div>
+</f3:inject>

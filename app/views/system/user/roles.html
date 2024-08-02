@@ -1,0 +1,102 @@
+<f3:inject id="content">
+    <!-- Generated: 2022-08-18 23:30 -->
+    <div class="px-6 py-4">
+        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">{{ t('role.title') }}</h1>
+        <div class="gap-4 lg:flex">
+            <div class="lg:w-1/3" x-data="FFTable(roles)">
+                <include href="blocks/table.html" />
+                <include href="blocks/modal-form.html" />
+            </div>
+            <div class="lg:w-2/3 lg:mt-[4rem]" x-data="data" @table-event.window="eventHandler($event.detail)">
+                <div class="text-lg font-bold text-center">{{ t('role.right_list') }}</div>
+                <div class="grid grid-cols-2 gap-4 my-4" id="roles">
+                    <repeat group="{{ \Util\User::roleList() }}" value="{{@permissions}}" key="{{@section}}">
+                        {~ [$name, $text] = explode(" ", @section, 2) ~}
+                        <div class="p-2 border rounded-md">
+                            <div class="text-lg font-bold">{{$text}}</div>
+                            <repeat group="{{ @permissions }}" value="{{@value}}" key="{{@key}}">
+                                <div><input type="checkbox" x-model="roleList['{{@key}}']" :disabled="!Boolean(roleId)">
+                                    {{ \Preview::instance()->resolve(@value) }}
+                                </div>
+                            </repeat>
+                        </div>
+                    </repeat>
+                </div>
+                <button type="button" @click="save()"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    :disabled="!Boolean(roleId)">{{ t("common.save") }}</button>
+            </div>
+        </div>
+    </div>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    {~
+    $roles = array_merge(...array_values(\Util\User::roleList()));
+    array_walk($roles, fn (&$e) => $e = false);
+    $json = json_encode($roles, JSON_PRETTY_PRINT);
+    ~}
+    <script type="text/javascript">
+        let roles = {
+            fields: [
+                { title: 'Id', name: 'id', visible: false, readonly: true },
+                { title: '{{ t("role.display") }}', name: 'name' },
+                { title: '{{ t("role.code") }}', name: 'role' },
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/user/roles',
+                editable: true,
+                selection: 'single',
+                pageSize: 20,
+                sorting: 'multiple',
+                display: 'compact',
+                size: 'small',
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/user/edit-role',
+                csrf: {
+                    field: '_token',
+                    value: '{{ csrf() }}',
+                },
+                object: 'Roles',
+                size: 'normal', // small, normal, large, huge 
+                columns: 1,
+                pk: ['id'], // primary key
+            }
+        }
+
+        let data = {
+            roleId: 0,
+            roleList: eval(`({{@json}})`),
+            load() {
+                Object.keys(this.roleList).forEach(k => this.roleList[k] = false);
+                fetchData('{{@BASE}}/ajax/user/get-permission', { role_id: this.roleId }).then(data => {
+                    data.permissions.split(/,/).forEach(e => eval(`(this.roleList['${e}'] = true)`));
+                })
+            },
+            save() {
+                let permissions = [];
+                Object.keys(this.roleList).forEach(k => this.roleList[k] && permissions.push(k));
+                fetchData('{{@BASE}}/ajax/user/set-permission', { role_id: this.roleId, permissions: permissions.filter(String).join(',') }).then(
+                    data => {
+                        popupInfo('Roles updated');
+                    },
+                    errors => popupError('Error', errors));
+            },
+            eventHandler(event) {
+                if (event.event == 'select') {
+                    this.roleId = event.data.id;
+                    this.load();
+                } else {
+                    Object.keys(this.roleList).forEach(k => this.roleList[k] = false);
+                    this.roleId = 0;
+                }
+            }
+        }
+    </script>
+</f3:inject>
+<include href="blocks/popup.html" />

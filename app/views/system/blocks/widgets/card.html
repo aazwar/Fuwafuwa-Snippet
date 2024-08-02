@@ -1,0 +1,16 @@
+{~
+if(!empty(@image)) {
+@image = '<a href="' . @link . '">
+  <img class="rounded-t-lg" src="' . @image . '" alt="">
+</a>';
+}
+~}
+<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
+  {{@image}}
+  <div class="p-5">
+    <a href="{{@link}}">
+      <h5 class="mb-2 text-2xl font-bold tracking-tight">{{@title}}</h5>
+    </a>
+    <div class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ @content|raw }}</div>
+  </div>
+</div>

@@ -1,0 +1,224 @@
+<div class="grid gap-3" x-bind:class="{ 
+                    'md:grid-cols-2': form.columns == 2, 
+                    'md:grid-cols-3': form.columns == 3,
+                    'md:grid-cols-4': form.columns == 4,
+                    'md:grid-cols-1': form.columns == 1 || !form.columns,
+                    'max-w-md': form.size == 'small',
+                    'max-w-4xl': form.size == 'large',
+                    'max-w-7xl': form.size == 'huge',
+                    'max-w-lg': form.size == 'normal' || !form.size
+                }">
+    <template x-for="(field, index) in form.fields" x-bind:key="index">
+        <div x-bind:class="form.class[field.name]" x-bind:id="'form_' + field.name">
+            <div class="grid items-start content-start gap-1"
+                x-bind:class="(form.inline && 'grid-cols-4 [&>:not(label)]:col-span-3')" x-id="['input']">
+                <label x-bind:for="$id('input')" class="block text-sm font-medium text-gray-900 dark:text-white"
+                    x-bind:class="{ 'text-right pr-2  py-2.5': form.inline }" x-text="field.title"></label>
+                <div>
+                    <!-- autocomplete -->
+                    <template x-if="field.type == 'autocomplete'">
+                        <div class="relative" x-data="{ 
+                            ac_show: false, 
+                            value: '', 
+                            init() { this.value = data[field.name] },
+                            suggestions: field.options?.split('|') || [], 
+                            get fval() { return this.value && !this.lookupUrl ? this.suggestions.filter(e => e.match(new RegExp(this.value, 'i'))) : this.suggestions } ,
+                            lookupUrl: field.lookupUrl,
+                            value_change(value) {
+                                if(this.lookupUrl) {
+                                    fetch(this.lookupUrl + value).then(resp => resp.json()).then(data => this.suggestions = data);
+                                } else {
+                                    this.setValue(value);
+                                }
+                            },
+                            setValue(v) {
+                                this.value = v;
+                                data[field.name] = v;
+                            }
+                        }">
+                            <input :id="$id('input')" class="input" x-bind:name="'form' + '_' + field.name"
+                                x-on:click="ac_show = true" x-on:click.outside="ac_show = false" x-modelable="value"
+                                x-on:input.debounce="value_change($el.value)" x-on:keydown.escape="ac_show = false"
+                                x-on:keydown.tab="ac_show = false" />
+                            <div class="absolute w-full" x-show="ac_show">
+                                <div class="z-10 w-full bg-white rounded-b-lg shadow">
+                                    <ul class="px-3 pb-3 overflow-y-auto text-sm text-gray-700 max-h-48">
+                                        <template x-for="opt in fval">
+                                            <li>
+                                                <div class="flex items-center rounded over:bg-gray-600 ps-2 hover:bg-gray-100"
+                                                    x-on:click="setValue(opt); ac_show = false">
+                                                    <span
+                                                        class="w-full py-2 text-sm font-medium text-gray-900 rounded ms-2"
+                                                        x-text="opt"></span>
+                                                </div>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <!-- checkbox -->
+                    <template x-if="field.type == 'checkbox'">
+                        <input x-bind:id="$id('input')" type="checkbox" x-bind:checked="Boolean(data[field.name])"
+                            x-bind:name="'form_' + field.name" value="1"
+                            x-on:change="data[field.name] = $el.checked ? $el.value : null"
+                            class="checkbox disabled:cursor-not-allowed" x-bind:class="form.inline && 'my-2. 5'"
+                            x-bind:disabled="Boolean(functioning(field.readonly)(form))"
+                            x-init="field.attr && Object.keys(field.att).forEach(e => $el.setAttribute(e, field.attr[e]))">
+                    </template>
+                    <!-- checkboxes -->
+                    <template x-if="field.type == 'checkboxes'">
+                        <div class="flex p-2.5 bg-theme-inputBackground rounded-xl">
+                            <div class="grid w-full gap-2" x-bind:class="{ 
+                                'grid-cols-2': field.cols == 2,
+                                'grid-cols-3': field.cols == 3,
+                                'grid-cols-4': field.cols == 4,
+                            }">
+                                <template x-for="opt in ffOptions(field.options)">
+                                    <div x-id="['checkbox']" class="flex justify-start">
+                                        <input x-bind:id="$id('checkbox')" type="checkbox" class="p-2 checkbox"
+                                            x-bind:value="opt.value"
+                                            x-bind:checked="Array.isArray(data[field.name]) ? data[field.name].some(e => e.toLowerCase() == opt.value.toLowerCase()) : false"
+                                            x-on:click="data[field.name] = data[field.name].some(e => e.toLowerCase() == opt.value.toLowerCase()) ? data[field.name].filter(e => e.toLowerCase() != opt.value.toLowerCase()) : [...data[field.name], opt.value]">
+                                        <label x-bind:for="$id('checkbox')" class="ml-2 text-sm font-medium"
+                                            x-text="opt.label"></label>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    <!-- input -->
+                    <template
+                        x-if="['number', 'date', 'datetime-local', 'email', 'month', 'password', 'tel', 'time', 'text', 'url', 'week'].includes(field.type || 'text')">
+                        <input x-bind:type="field.type" x-bind:name="'form' + '_' + field.name" x-bind:id="$id('input')"
+                            x-model="data[field.name]" class="input disabled:opacity-30 disabled:cursor-not-allowed"
+                            x-bind:class="{ 'text-right': field.type == 'number' }" x-bind:value="data[field.name]"
+                            x-bind:disabled="Boolean(functioning(field.readonly)(form))" autocomplete="off"
+                            x-init="field.attr && Object.keys(field.attr).forEach(e => $el.setAttribute(e, field.attr[e]))">
+                    </template>
+                    <!-- uploader -->
+                    <template x-if="field.type == 'uploader'">
+                        <div>
+                            <template x-if="!data[field.name]?.downloadkey">
+                                <div>
+                                    <button type="button" class="button button-small"
+                                        x-on:click="uploadProcess(field.title, 'UploadCallback', field.name)">Upload</button>
+                                </div>
+                            </template>
+                            <template x-if="data[field.name]?.downloadkey">
+                                <div class="w-full max-w-[320px] leading-1.5 col-span-2">
+                                    <div
+                                        class="flex items-start w-full p-4 bg-gray-100 border-gray-200 dark:bg-gray-700 rounded-xl">
+                                        <div class="w-full me-2">
+                                            <div
+                                                class="flex items-center gap-2 pb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                <svg fill="currentColor" class="flex-shrink-0 size-5"
+                                                    viewBox="0 0 24 24">
+                                                    <use href="#file" />
+                                                </svg>
+                                                <div class="truncate" style="width: 155px;"
+                                                    x-text="data[field.name]?.name"></div>
+                                            </div>
+                                            <div
+                                                class="flex gap-2 text-xs font-normal text-gray-500 dark:text-gray-400">
+                                                <span x-text="data[field.name]?.meta?.hsize"></span>
+                                                <svg class="self-center" width="3" height="4" viewBox="0 0 3 4"
+                                                    fill="none">
+                                                    <circle cx="1.5" cy="2" r="1.5" fill="#6B7280" />
+                                                </svg>
+                                                <span class="uppercase" x-text="data[field.name]?.meta?.ext"></span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center self-center">
+                                            <button
+                                                class="inline-flex items-center self-center p-2 text-sm font-medium text-center text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200 dark:text-white dark:bg-gray-600 dark:hover:bg-gray-500"
+                                                type="button">
+                                                <svg class="text-gray-900 size-5 dark:text-white" fill="currentColor"
+                                                    viewBox="0 0 32 32" x-on:click="DeleteFile(field.name)">
+                                                    <path
+                                                        d="M 16 3 C 8.832031 3 3 8.832031 3 16 C 3 23.167969 8.832031 29 16 29 C 23.167969 29 29 23.167969 29 16 C 29 8.832031 23.167969 3 16 3 Z M 16 5 C 22.085938 5 27 9.914063 27 16 C 27 22.085938 22.085938 27 16 27 C 9.914063 27 5 22.085938 5 16 C 5 9.914063 9.914063 5 16 5 Z M 12.21875 10.78125 L 10.78125 12.21875 L 14.5625 16 L 10.78125 19.78125 L 12.21875 21.21875 L 16 17.4375 L 19.78125 21.21875 L 21.21875 19.78125 L 17.4375 16 L 21.21875 12.21875 L 19.78125 10.78125 L 16 14.5625 Z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <!-- file -->
+                    <template x-if="field.type == 'file'">
+                        <div class="flex gap-2"
+                            x-bind:class="{ 'pointer-events-none cursor-not-allowed': functioning(field.readonly)(form) }">
+                            <input x-bind:type="field.type" x-bind:name="`form_${field.name}`" x-bind:id="$id('input')"
+                                x-on:change="data[field.name] = Object.values($event.target.files)"
+                                class="flex-1 block w-full text-sm border rounded-lg cursor-pointer text-theme-inputText bg-theme-inputBackground border-theme-border1 dark:text-theme-darkInputText focus:outline-none dark:bg-theme-darkInputBackground dark:border-theme-border3 disabled:cursor-not-allowed"
+                                autocomplete="off"
+                                x-init="field.attr && Object.keys(field.attr).forEach(e => $el.setAttribute(e, field.attr[e]))">
+                            <button
+                                x-on:click="data[field.name] = null; document.querySelector(`[name='form_${field.name}']`).value = ''">
+                                <svg class="size-6 text-theme-text3 dark:text-theme-darkText3" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
+                    <!-- select -->
+                    <template x-if="field.type?.match(/select/)">
+                        <select x-bind:id="$id('input')" x-bind:name="'form' + '_' + field.name"
+                            x-model="data[field.name]"
+                            x-init="field.attr && Object.keys(field.attr).forEach(e => $el.setAttribute(e, field.attr[e]))"
+                            x-on:change="isWatched(field.name) && $dispatch('value-change', { table: table?.id, field: field.name, value: $el.value })"
+                            class="select disabled:cursor-not-allowed p-2.5" x-bind:value="data[field.name]"
+                            x-bind:disabled="Boolean(functioning(field.readonly)(form))">
+                            <template x-if="field.blankOption">
+                                <option value="" x-text="field.blankOption"></option>
+                            </template>
+                            <template x-for="option in ffOptions(field.options)">
+                                <option x-bind:value="option.value" x-text="option.label"
+                                    x-bind:selected="option.value == data[field.name]">
+                                </option>
+                            </template>
+                        </select>
+                    </template>
+                    <!-- radio -->
+                    <template x-if="field.type == 'radio'">
+                        <div class="flex p-2.5 bg-theme-inputBackground rounded-xl">
+                            <div class="flex flex-wrap gap-x-4 gap-y-2"
+                                x-bind:class="{ 'pointer-events-none cursor-not-allowed': functioning(field.readonly)(form) }">
+                                <template x-for="(radio, index) in ffOptions(field.options)">
+                                    <div x-id="['radio']" class="flex flex-nowrap">
+                                        <input x-bind:checked="data[field.name] == radio.value" x-bind:id="$id('radio')"
+                                            type="radio" x-bind:value="radio.value"
+                                            x-bind:name="'form' + '_' + field.name" x-model="data[field.name]"
+                                            x-on:change="isWatched(field.name) && $dispatch('value-change', { table: table?.id, field: field.name, value: $el.value })"
+                                            class="radio disabled:cursor-not-allowed">
+                                        <label x-bind:for="$id('radio')"
+                                            class="ml-2 text-sm font-medium text-theme-inputText dark:text-theme-darkInputText"
+                                            x-text="radio.label"></label>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    <!-- textarea -->
+                    <template x-if="field.type == 'textarea'">
+                        <textarea x-bind:id="$id('input')" rows="4" x-bind:name="'form' + '_' + field.name"
+                            x-model="data[field.name]" class="textarea disabled:cursor-not-allowed"
+                            x-text="data[field.name]" x-bind:disabled="Boolean(functioning(field.readonly)(form))"
+                            x-init="field.attr && Object.keys(field.attr).forEach(e => $el.setAttribute(e, field.attr[e]))"></textarea>
+                    </template>
+                    <p class="text-sm text-theme-text3 dark:text-theme-darkText3"
+                        x-html="functioning(field.explanation)(form) || ''"
+                        x-bind:class="{ '!col-start-2' : field.inline }">
+                    </p>
+                    <span class="text-xs text-theme-error dark:text-theme-darkError"
+                        x-bind:class="{ '!col-start-2' : field.inline }" x-text="errors[field.name]"></span>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>

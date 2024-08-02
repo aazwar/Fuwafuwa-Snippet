@@ -1,0 +1,22 @@
+{~
+if(isLoggedIn()) {
+if((@SESSION.group ?? '') == 'admin') {
+~}
+<include href="templates/front_user.html" /> {~
+} else {
+~}
+<include href="member/dashboard.html" /> {~
+}
+} else {
+if(@WEBSITE.guest_page) {
+$page = m('\Fuwafuwa\Model\Page')->load(['slug = ?', @WEBSITE.guest_page]);
+$page['content'] = $t->resolve($t->build($t->parse($page['content'])));
+$this->fw->set('page', $page);
+$t = \Template::instance();
+print (new \Theme)->render('page/view');
+} else {
+~}
+<include href="templates/front_guest.html" /> {~
+}
+}
+~}

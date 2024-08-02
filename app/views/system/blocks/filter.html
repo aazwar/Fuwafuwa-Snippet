@@ -1,0 +1,59 @@
+<template x-if="params.filter.length">
+    <div class="relative gap-4 p-4 mb-2 border bg-theme-tableHeader dark:bg-theme-darkTableHeader rounded-xl"
+        x-bind:class="table.filter?.width || 'xl:w-2/3'" x-show="table.showFilter">
+        <div
+            class="absolute px-2 text-xs rounded -top-2 left-4 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+            Filter</div>
+        <div class="grid w-full gap-4" x-bind:class="{ 'md:grid-cols-2': table.filter?.cols == 2 }">
+            <template x-for="(field, index) in params.filter" :key="index">
+                <div class="grid grid-cols-4">
+                    <label :for="'filter_' + field.col" class="input-label text-right pr-1 py-2.5 whitespace-nowrap"
+                        x-text="field.title"></label>
+                    <template
+                        x-if="field.op != 'BETWEEN' && ['number', 'date', 'datetime-local', 'email', 'month', 'password', 'tel', 'time', 'text', 'url', 'week'].includes(fprop(field.col)?.type || 'text')">
+                        <input :type="fprop(field.col)?.type || 'text'" :id="'filter_' + field.col"
+                            x-model="params.filter[index].value"
+                            class="col-span-3 input disabled:opacity-30 disabled:cursor-not-allowed"
+                            :value="data[field.name]" autocomplete="off" x-on:keyup.enter="goToPage(1)">
+                    </template>
+                    <template x-if="field.op == 'BETWEEN'">
+                        <div class="flex items-center col-span-3 gap-2">
+                            <template
+                                x-if="['number', 'date', 'datetime-local', 'email', 'month', 'password', 'tel', 'time', 'text', 'url', 'week'].includes(fprop(field.col)?.type || 'text')">
+                                <input :type="fprop(field.col)?.type || 'text'" :id="'filter_' + field.col"
+                                    x-model="params.filter[index].value"
+                                    class="col-span-3 input disabled:opacity-30 disabled:cursor-not-allowed"
+                                    :value="data[field.name]" autocomplete="off" x-on:keyup.enter="goToPage(1)">
+                            </template>
+                            <span> – </span>
+                            <template
+                                x-if="['number', 'date', 'datetime-local', 'email', 'month', 'password', 'tel', 'time', 'text', 'url', 'week'].includes(fprop(field.col)?.type || 'text')">
+                                <input :type="fprop(field.col)?.type || 'text'" :id="'filter_' + field.col + '2'"
+                                    x-model="params.filter[index].value2" class="col-span-3 input" autocomplete="off"
+                                    x-on:keyup.enter="goToPage(1)">
+                            </template>
+                        </div>
+                    </template>
+                    <template x-if="fprop(field.col)?.type?.match(/select|radio|checkboxes/)">
+                        <select :id="'filter_' + field.col" x-model="params.filter[index].value"
+                            class="col-span-3 select p-2.5" x-bind:value="data[field.name]" x-on:change="goFirstPage()">
+                            <template x-for="option in ffOptions(fprop(field.col).options)">
+                                <option x-bind:value="option.value" x-text="option.label"
+                                    x-bind:selected="option.value == data[field.name]">
+                                </option>
+                            </template>
+                        </select>
+                    </template>
+                </div>
+            </template>
+            <div class="col-start-1">
+                <button class="button button-white button-tiny"
+                    x-on:click="goFirstPage(); document.getElementById('filter_' + params.filter[0].col).focus()">Filter
+                </button>
+                <button class="button button-gray button-tiny"
+                    x-on:click="clearFilter(); document.getElementById('filter_' + params.filter[0].col).focus()">
+                    Clear</button>
+            </div>
+        </div>
+    </div>
+</template>

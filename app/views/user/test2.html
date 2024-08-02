@@ -1,0 +1,38 @@
+<f3:inject id="content">
+    <div class="container mx-auto my-6">
+        <h1 class="mt-8 mb-4 text-xl font-semibold text-gray-800">AlpineJS File Upload</h1>
+
+        <div x-data="data">
+            <form>
+                <label class="block w-full p-3 my-2 border-2 border-gray-200 rounded cursor-pointer" for="customFile">
+                    <input type="file" class="sr-only" id="customFile"
+                        @change="data.files = Object.values($event.target.files)">
+                    <span
+                        x-text="data.files ? data.files.map(file => file.name).join(', ') : 'Choose single file...'"></span>
+                </label>
+                <input type="text" x-model="data.test">
+            </form>
+            <button class="button" @click="send()">Send</button>
+        </div>
+
+    </div>
+</f3:inject>
+<f3:inject id="script" mode="append">
+    <script>
+        let data = {
+            data: {
+                files: null,
+                test: '{{@GET.a ?? ""}}',
+            },
+            send() {
+                let formData = new FormData();
+                formData.append("files##", this.data.files[0], this.data.files[0].name);
+                formData.append("data['test']", this.data.test);
+                fetch('/tester/test1', {
+                    method: 'POST',
+                    body: formData
+                }).then(resp => resp.json()).then(resp => console.log(resp));
+            }
+        }
+    </script>
+</f3:inject>
