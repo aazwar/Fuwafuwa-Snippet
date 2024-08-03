@@ -13,7 +13,7 @@ composer.lock
 package-lock.json
 yarn-error.log
 system_obfs
-app/db/*
+# app/db/*
 media/*
 uploads/
 tester.php
