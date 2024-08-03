@@ -13,7 +13,7 @@ while getopts "rind" o; do
      EXCLUDE="--exclude=.well-known --exclude=node_modules --exclude=.git --exclude=_docs"
      ;;
      d) # update sqlite database
-     EXCLUDE="--exclude=.well-known --exclude=node_modules --exclude=tmp --exclude=.git --exclude=sync.sh --exclude=_docs"
+     EXCLUDE="--exclude=.well-known --exclude=node_modules --exclude=tmp --exclude=.git --exclude=sync.sh --exclude=_docs --exclude=.htaccess"
      ;;
      n)
      N=n

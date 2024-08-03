@@ -1,0 +1,79 @@
+<f3:inject id="content">
+    <div class="px-6 py-4">
+        <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">{{ t('menu.page') }}</h1>
+        <div x-data="page">
+            <include href="blocks/table.html" />
+            <include href="blocks/modal-form.html" />
+        </div>
+    </div>
+</f3:inject>
+<f3:inject id="script">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    <script type="text/javascript">
+        let page = FFTable({
+            fields: [
+                { title: 'Id', name: 'id', hidden: true },
+                { title: 'Title', name: 'title', searchable: true },
+                { title: 'Slug', name: 'slug', searchable: true },
+                { title: 'Content', name: 'content', class: 'min-w-40', sortable: false, formatter(v) { return v.replace(/<.*?>/g, '').substring(0, 200) } },
+                { title: 'Script', name: 'script', type: 'textarea', visible: false },
+                { title: 'Created', name: 'created', class: 'whitespace-nowrap', readonly: true, formatter: v => v ? dayjs(v).format('D MMM YYYY') : '' },
+                { title: 'Updated', name: 'updated', class: 'whitespace-nowrap', readonly: true, formatter: v => v ? dayjs(v).format('D MMM YYYY') : '' },
+            ],
+
+            // table options
+            table: {
+                url: '{{@BASE}}/ajax/content/pages',
+                editable: true,
+                addable: true,
+                editable: true,
+                deletable: true,
+                selection: 'single',
+                selectionCheckbox: false,
+                pageSize: 20,
+                sorting: 'multiple',
+                size: 'full',
+                sort: [{ col: 'created', sort: 'desc' }],
+                toolbar: [{
+                    title: 'View',
+                    action(data) { location.href = '{{@BASE}}/page/' + data.slug },
+                    show(selection) { return selection },
+                    icon: '<svg class="h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>'
+                }],
+                functions: {
+                    add() { location.href = '{{@BASE}}/page/edit'; return true },
+                    edit(data) { location.href = '{{@BASE}}/page/edit?id=' + data.id }
+                },
+            },
+
+            // form options
+            form: {
+                url: '{{@BASE}}/ajax/content/page-edit',
+                object: 'Page',
+                size: 'huge', // small, normal, large, huge 
+                columns: 2,
+                class: {
+                    content: 'col-span-2',
+                    script: 'col-span-2',
+                },
+                pk: ['id'], // primary key
+                fullHeight: true,
+                formInit(data) {
+                    initTinymce('[name="form_content"]');
+                    return data;
+                },
+                onShow(data) {
+                    tinymce.get(0).setContent(data['content']);
+                    return data;
+                },
+                preSubmit(data) {
+                    data['content'] = tinymce.get(0).getContent();
+                    return data;
+                }
+            }
+        });
+    </script>
+</f3:inject>
+<include href="blocks/modal-image-browser.html" />
+<include href="blocks/tinymce.html" />
+<include href="blocks/popup.html" />

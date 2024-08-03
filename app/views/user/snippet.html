@@ -1,5 +1,6 @@
 <f3:inject id="meta" mode="append">
     <link rel="stylesheet" type="text/css" href="{{@BASE}}/css/default.min.css">
+    <link rel="stylesheet" type="text/css" href="{{@BASE}}/css/tiny-mde.min.css">
     <style>
         /* Style for the copy icon */
         .copy-icon {
@@ -31,8 +32,11 @@
         <include href="blocks/modal-form.html" />
     </div>
     <ff:modal id="snippet" title="Snippet" size="large">
-        <div class="overflow-y-auto h-[70vh] px-6 py-4" x-data="view_snippet">
-            <div id="snippet_div" class="format"></div>
+        <div class="overflow-y-auto h-[70vh] px-6 py-4 flex flex-col gap-2" x-data="view_snippet">
+            <div id="snippet_div" class="max-w-full format" x-html="data.snippet"></div>
+            <div>
+                <span>Tag</span> <span x-text="data.tag"></span>
+            </div>
         </div>
     </ff:modal>
 </f3:inject>
@@ -40,7 +44,10 @@
     <script src="{{@BASE}}/js/fftable.min.js"></script>
     <script src="{{@BASE}}/js/markdown-it.min.js"></script>
     <script src="{{@BASE}}/js/highlight.min.js"></script>
+    <script src="{{@BASE}}/js/tiny-mde.min.js"></script>
+    <!-- <script src="{{@BASE}}/js/mermaid.js"></script> -->
     <script type="text/javascript">
+        var contentMde;
         function copyToClipboard(icon) {
             const codeBlock = icon.nextElementSibling; // Find the <code> element
             const code = codeBlock.innerText || codeBlock.textContent;
@@ -54,11 +61,12 @@
         let snippet = FFTable({
             fields: [
                 { title: 'Id', name: 'id', hidden: true },
-                { title: 'Title', name: 'title', searchable: true },
-                { title: 'Summary', name: 'summary', type: 'textarea', searchable: true },
-                { title: 'Content', name: 'content', type: 'textarea', formatter: v => v.length > 100 ? v.slice(0, 100) : v, attr: { rows: "10" } },
-                { title: 'Updated', name: 'updated', formatter: v => dayjs(v).format('YYYY-MM-DD'), virtual: true, },
-                { title: 'Updater', name: 'updater', virtual: true },
+                { title: '{{ t("snippet.title") }}', name: 'title', searchable: true },
+                { title: '{{ t("snippet.summary") }}', name: 'summary', type: 'textarea', searchable: true },
+                { title: '{{ t("snippet.tag") }}', name: 'tag', searchable: true },
+                { title: '{{ t("snippet.content") }}', name: 'content', type: 'textarea', formatter: v => v.length > 100 ? v.slice(0, 100) : v, attr: { rows: "10" } },
+                { title: '{{ t("snippet.updated") }}', name: 'updated', formatter: v => dayjs(v).format('YYYY-MM-DD'), class: 'whitespace-nowrap', },
+                { title: '{{ t("snippet.updater") }}', name: 'updater' },
             ],
 
             // table options
@@ -77,16 +85,34 @@
                 toolbar: [{
                     title: 'View',
                     action(data) {
-                        view_snippet.$data.data = data;
                         modal_snippet.open();
                         var md = window.markdownit({
                             highlight: function (str, lang) {
+                                // if (lang.match(/mermaid|diagram/)) {
+                                //     // return `<pre class="mermaid">${str}</pre>`;
+                                //     let idx = Math.floor(Math.random() * 1000);
+                                //     const graphDiv = document.createElement('div');
+                                //     graphDiv.id = `mermaid-${idx}`;
+                                //     graphDiv.className = 'mermaid';
+                                //     document.body.appendChild(graphDiv);
+
+                                //     // Initialize Mermaid.js
+                                //     mermaid.initialize({ startOnLoad: true });
+
+                                //     // Render the Mermaid diagram
+                                //     mermaid.render(graphDiv.id, str);
+
+                                //     return `<div id="${graphDiv.id}"></div>`;
+                                // } else 
                                 if (lang && hljs.getLanguage(lang)) {
                                     try {
                                         return '<pre class="relative hljs not-format"><div class="copy-icon" onclick="copyToClipboard(this)">Copy</div><code class="language-' + lang + '">' +
                                             hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
                                             '</code></pre>';
                                     } catch (__) { }
+                                } else {
+                                    // Handle code blocks as before
+                                    return '<pre class="relative hljs not-format"><div class="copy-icon" onclick="copyToClipboard(this)">Copy</div><code>' + md.utils.escapeHtml(str) + '</code></pre>';
                                 }
 
                                 return '<pre class="relative hljs not-format"><div class="copy-icon" onclick="copyToClipboard(this)">Copy</div><code>' + md.utils.escapeHtml(str) + '</code></pre>';
@@ -94,7 +120,11 @@
                         });
 
                         var result = md.render(data.content);
-                        document.getElementById('snippet_div').innerHTML = `${result}`;
+                        view_snippet.$data.data = {
+                            snippet: result,
+                            tag: data.tag,
+                        };
+
                     },
                     show(selection) { return selection },
                     icon: '<svg class="h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>'
@@ -105,13 +135,37 @@
             form: {
                 url: '{{@BASE}}/ajax/snippet/edit',
                 object: 'Snippet',
-                size: 'normal', // small, normal, large, huge 
+                size: 'large', // small, normal, large, huge 
                 columns: 1,
                 pk: ['id'], // primary key
+                formInit(data) {
+                    content = document.querySelector('textarea[name="form_content"]');
+                    let parent = content.parentElement;
+                    let toolbar = document.createElement('div');
+                    toolbar.innerHTML = '<div id="toolbar"></div>';
+                    parent.insertBefore(toolbar, parent.firstChild);
+                    contentMde = new TinyMDE.Editor({ element: content });
+                    var commandBar = new TinyMDE.CommandBar({
+                        element: toolbar,
+                        editor: contentMde,
+                    });
+                    return data;
+                },
+                onShow(data) {
+                    contentMde.setContent(data.content);
+                    return data;
+                },
+                preSubmit(data) {
+                    data.content = contentMde.getContent();
+                    return data;
+                }
             }
         });
         let view_snippet = {
-            code: '',
+            data: {
+                code: '',
+                tag: '',
+            }
         }
     </script>
 </f3:inject>

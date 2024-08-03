@@ -23,6 +23,7 @@ class Snippet extends \Fuwafuwa\BaseModel {
         };
         $this->preUpdate = function (self $self, array $pkeys): void {
             $self['updater'] = \Base::instance()->get('SESSION.fullname');
+            error_log("fullname: " . \Base::instance()->get('SESSION.fullname'));
             $self['updated'] = date('Y-m-d H:i:s');
         };
     }

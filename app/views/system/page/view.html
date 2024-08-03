@@ -1,0 +1,22 @@
+<f3:inject id="meta">
+    <title>{{ @page.title }}</title>
+    <meta name="description" content="{{ @page.title }}" />
+    <meta name="robots" content="all" />
+</f3:inject>
+<f3:inject id="content">
+    <div class="p-2 mx-auto format lg:format-lg">
+        <h1>{{ @page.title }}</h1>
+        <div>{{ @page.content|raw }}</div>
+        <check if="{{rbac_session_permission('page.edit')}}">
+            <div class="mt-4">
+                <button class="button button-gray" onclick="location.href = '{{@BASE}}/page/edit?id={{@page.id}}'">{{
+                    t('common.edit') }}</button>
+            </div>
+        </check>
+    </div>
+</f3:inject>
+<f3:inject id="script" mode="append">
+    <script src="{{@BASE}}/js/fftable.min.js"></script>
+    {{'<scr'.'ipt>' }} {{ @page.script ?? '' | raw }} </script>
+</f3:inject>
+<include href="blocks/popup.html" />
