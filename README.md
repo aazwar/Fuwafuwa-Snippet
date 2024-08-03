@@ -1,4 +1,5 @@
 # Fuwafuwa Snippet
+[![screenshot](https://raw.github.com/aazwar/Fuwafuwa-Snippet/master/images/screenshot.png)](#features)
 
 Fuwafuwa Snippet is a snippet manager application designed to help you easily store, organize, and access your code snippets.
 
@@ -29,3 +30,5 @@ Before submitting a pull request, please make sure to follow our coding conventi
 
 ## License
 Fuwafuwa Snippet is licensed under the MIT License. See the LICENSE file for more information.
+
+Created with [Fuwafuwa Framework](https://framework.fuwafuwa.web.id)

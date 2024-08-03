@@ -31,6 +31,7 @@
         <include href="blocks/table.html" />
         <include href="blocks/modal-form.html" />
     </div>
+    <div id="graphDiv" class="hidden"></div>
     <ff:modal id="snippet" title="Snippet" size="large">
         <div class="overflow-y-auto h-[70vh] px-6 py-4 flex flex-col gap-2" x-data="view_snippet">
             <div id="snippet_div" class="max-w-full format" x-html="data.snippet"></div>
@@ -45,8 +46,9 @@
     <script src="{{@BASE}}/js/markdown-it.min.js"></script>
     <script src="{{@BASE}}/js/highlight.min.js"></script>
     <script src="{{@BASE}}/js/tiny-mde.min.js"></script>
-    <!-- <script src="{{@BASE}}/js/mermaid.js"></script> -->
+    <script src="{{@BASE}}/js/mermaid.js"></script>
     <script type="text/javascript">
+        mermaid.initialize({ startOnLoad: false });
         var contentMde;
         function copyToClipboard(icon) {
             const codeBlock = icon.nextElementSibling; // Find the <code> element
@@ -65,8 +67,8 @@
                 { title: '{{ t("snippet.summary") }}', name: 'summary', type: 'textarea', searchable: true },
                 { title: '{{ t("snippet.tag") }}', name: 'tag', searchable: true },
                 { title: '{{ t("snippet.content") }}', name: 'content', type: 'textarea', formatter: v => v.length > 100 ? v.slice(0, 100) : v, attr: { rows: "10" } },
-                { title: '{{ t("snippet.updated") }}', name: 'updated', formatter: v => dayjs(v).format('YYYY-MM-DD'), class: 'whitespace-nowrap', },
-                { title: '{{ t("snippet.updater") }}', name: 'updater' },
+                { title: '{{ t("snippet.updated") }}', name: 'updated', formatter: v => dayjs(v).format('YYYY-MM-DD'), class: 'whitespace-nowrap', readonly: true },
+                { title: '{{ t("snippet.updater") }}', name: 'updater', readonly: true },
             ],
 
             // table options
@@ -88,22 +90,10 @@
                         modal_snippet.open();
                         var md = window.markdownit({
                             highlight: function (str, lang) {
-                                // if (lang.match(/mermaid|diagram/)) {
-                                //     // return `<pre class="mermaid">${str}</pre>`;
-                                //     let idx = Math.floor(Math.random() * 1000);
-                                //     const graphDiv = document.createElement('div');
-                                //     graphDiv.id = `mermaid-${idx}`;
-                                //     graphDiv.className = 'mermaid';
-                                //     document.body.appendChild(graphDiv);
+                                if (lang.match(/mermaid|diagram/)) {
+                                    return `<pre class="mermaid">${str}</pre>`;
+                                }
 
-                                //     // Initialize Mermaid.js
-                                //     mermaid.initialize({ startOnLoad: true });
-
-                                //     // Render the Mermaid diagram
-                                //     mermaid.render(graphDiv.id, str);
-
-                                //     return `<div id="${graphDiv.id}"></div>`;
-                                // } else 
                                 if (lang && hljs.getLanguage(lang)) {
                                     try {
                                         return '<pre class="relative hljs not-format"><div class="copy-icon" onclick="copyToClipboard(this)">Copy</div><code class="language-' + lang + '">' +
@@ -124,6 +114,11 @@
                             snippet: result,
                             tag: data.tag,
                         };
+                        if (result.match(/mermaid/)) {
+                            setTimeout(() => mermaid.run({
+                                nodes: document.querySelectorAll('.mermaid'),
+                            }), 50);
+                        }
 
                     },
                     show(selection) { return selection },
